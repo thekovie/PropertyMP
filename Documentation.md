@@ -4,6 +4,19 @@ This repository started at December 23, 2021.
 
 ## <u>Formulas or Algorithms</u>
 
+### Variables
+```c
+# Monitor 9-digit integer
+int nPlayer1; 
+int nPlayer2;
+```
+
+```c
+# Monitor amount left
+int nPlayertAmt1 = 200;
+int nPlayertAmt2 = 200;
+```
+
 ### Buying Properties
 ```c
 nElectric = 150;
@@ -61,3 +74,8 @@ int isPrime (int diceRoll) {
 # Check if diceRoll is equal to 0, player goes to jail.
 ```
 
+### Not enough cash!
+```c
+# Resell value of the property is half the cost of the property
+
+property / 2;
