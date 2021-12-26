@@ -1,6 +1,6 @@
 {
-  "C_Cpp_Runner.cCompilerPath": "/usr/bin/gcc",
-  "C_Cpp_Runner.cppCompilerPath": "/usr/bin/g++",
+  "C_Cpp_Runner.cCompilerPath": "C:/ProgramData/chocolatey/lib/mingw/tools/install/mingw64/bin/gcc.exe",
+  "C_Cpp_Runner.cppCompilerPath": "C:/ProgramData/chocolatey/lib/mingw/tools/install/mingw64/bin/g++.exe",
   "C_Cpp_Runner.debuggerPath": "/usr/bin/gdb",
   "C_Cpp_Runner.warnings": [
     "-Wall",
