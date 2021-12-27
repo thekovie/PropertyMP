@@ -38,7 +38,7 @@ House Properties (Paying rent)
 # The rent of an unrenovated
 property is one-fifth of its cost.
 
-nUnrenovated = nHouses / 0.2;
+nUnrenovated = nHouses * 0.2;
 ```
 
 ```c
@@ -60,7 +60,7 @@ diceRoll = rand() % 9 + 1
 
 int isPrime (int diceRoll) {
     int i, nDivisors;
-    for (i = 2, i < = diceRoll; i++) {
+    for (i = 2; i <= diceRoll; i++) {
         if (diceRoll % i == 0)
             nDivisors++
     }
@@ -79,3 +79,18 @@ int isPrime (int diceRoll) {
 # Resell value of the property is half the cost of the property
 
 property / 2;
+```
+
+### 9-digit integer Legends
+```
+LEFTMOST -> RIGHTMOST
+0 = Farm house (9)
+0 = Igloo (8)
+0 = Raiload  (7)
+x = Feelin' Lucky (6)
+0 = Castle (5)
+x = Jail Time (4)
+0 = Beach House (3)
+0 = Electric Company (2)
+0 = Tree House (1)
+```

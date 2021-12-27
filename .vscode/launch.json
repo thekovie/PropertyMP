@@ -30,9 +30,9 @@
         ""
       ],
       "stopAtEntry": false,
-      "cwd": "d:/Documents/GitHub Repos/PropertyMP",
+      "cwd": "e:/DLSU/Classes/1st Year/1st Term/CCPROG1/Assessments/PropertyMP",
       "environment": [],
-      "program": "d:/Documents/GitHub Repos/PropertyMP/build/Debug/outDebug",
+      "program": "e:/DLSU/Classes/1st Year/1st Term/CCPROG1/Assessments/PropertyMP/build/Debug/outDebug",
       "internalConsoleOptions": "openOnSessionStart",
       "MIMode": "gdb",
       "miDebuggerPath": "/usr/bin/gdb",
