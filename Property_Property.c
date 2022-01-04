@@ -1,9 +1,9 @@
 /*
     Description:       This is a turn-based two-player board game.
     Programmed by:     John Kovie L. Niño S15B
-    Last modified:     December 27, 2021
+    Last modified:     January 4, 2022
     Version:           1.0-alpha
-    Acknowledgements:  Used the Standard Library (stdlib.h), Math Library (math.h)
+    Acknowledgements:  Used the Standard Library (stdlib.h) and the Math Library (math.h) for making the program possible.
 */
 
 #include <stdio.h>
@@ -14,6 +14,7 @@
 #define BUY_ELECTRIC 150;
 #define BUY_RAILROAD 100;
 #define PAY_RAILROAD_RENT 35;
+#define PAY_RENOVATION 50;
 
 /*
     Description: This function generates a random number ranging from 1 to 9.
@@ -64,9 +65,9 @@ int isOwned (int opponent, int current, int location) {
     int nLoc1 = getDigit(current, location); // Current player
     int nLoc2 = getDigit(opponent, location); // Opponent player
 
-    if (nLoc2 == 1) // Opponent owns it
+    if (nLoc2 == 1 || nLoc2 == 2) // Opponent owns it
         return 1;
-    if (nLoc1 == 1) // Current player owns it
+    if (nLoc1 == 1 || nLoc1 == 2) // Current player owns it
         return 0;
     if (nLoc1 == 0 && nLoc2 == 0) { // Unowned
         return 0;
@@ -83,7 +84,7 @@ int isRenovated (int opponent, int current, int location) {
         return 0;
 }
 
-int promptBuy(int current, int location) {
+int promptBuy(int * current, int location) {
     int decide;
     printf("%s\n%s\n\n%s\n%s\n%s",
             "This property is currently UNOWNED.",
@@ -96,19 +97,79 @@ int promptBuy(int current, int location) {
 
     if (decide == 1) {
         if (location == 2) {
+            *current += 10;
+            printf("You have purchased the Electric Company!\n");
             return BUY_ELECTRIC;
         }
             
         else if (location == 7) {
+            *current += 1000000;
             return BUY_RAILROAD;
         }
 
-        else 
+        else  {
+            *current += pow(10, location-1);
             return location % 7 * 20;
-    } else; //skip
+        }
+            
 
+    } 
+    return 0;
+}
+
+int promptRenovate(int * current, int location) {
+    int decide;
+    printf("%s\n%s\n\n%s\n%s\n%s",
+            "You currently own this property",
+            "Please select the following:",
+            "[1]\tRenovate your property",
+            "[2]\tSkip to the next player",
+            ">> ");
+    
+    scanf("%d", &decide);
+
+    if (decide == 1) {
+        *current += pow(10, location-1);
+        return PAY_RENOVATION;
+    }
+    return 0;
+}
+
+void getPropertyName(int location) {
+    switch (location) {
+        case 0: printf("GO! COLLECT $200!\n"); break;
+        case 1: printf("TREEHOUSE.\n"); break;
+        case 2: printf("ELECTRIC COMPANY.\n"); break;
+        case 3: printf("BEACH HOUSE.\n"); break;
+        case 4: printf("JAIL TIME.\n"); break;
+        case 5: printf("CASTLE.\n"); break;
+        case 6: printf("FEELIN' LUCKY.\n"); break;
+        case 7: printf("RAILROAD.\n"); break;
+        case 8: printf("IGLOO.\n"); break;
+        case 9: printf("FARM HOUSE.\n"); break;
+    }
+}
+
+/* New Money parameter - so use it */
+int promptResellProperty(int * current, int owe, int money) {
+    int decide, i;
+    int count = 1;
+    printf("%s\n%s\n\n",
+            "You have insufficent funds!",
+            "Please resell one of your properties:");
+    for (i = 1; i < 10; i++) {
+        if (getDigit(*current, i) == 1 || getDigit(*current, i) == 2) {
+            printf("[%d]\t ", count);
+            getPropertyName(i);
+            printf("\n");
+        }
+        count++;
+    }
+    printf(">> ");
+    scanf("%d", &decide);
 
 }
+
 /*
     Description: Outputs introductory message as program runs
 */
@@ -123,17 +184,6 @@ void introMsg() {
         getchar();
         system("cls");
 }
-
-void printMenu() {
-    printf("%s\n%s\n%s\n%s\n%s\n",
-        "=====================================",
-        "||   PLEASE SELECT THE FOLLOWING   ||",
-        "=====================================",
-        "[1]\tBuy Property",
-        "[2]\tSell Property");
-    
-}
-
 
 void playerSwitch(int * current, int * opponent, int * playerno, int player1, int player2, int amt1, int amt2, int * camt1, int * camt2) {
     if (*current == player1) {
@@ -151,20 +201,7 @@ void playerSwitch(int * current, int * opponent, int * playerno, int player1, in
 
 }
 
-void getPropertyName(int location) {
-    switch (location) {
-        case 0: printf("GO! COLLECT $200!\n"); break;
-        case 1: printf("TREEHOUSE.\n"); break;
-        case 2: printf("ELECTRIC COMPANY.\n"); break;
-        case 3: printf("BEACH HOUSE.\n"); break;
-        case 4: printf("JAIL TIME.\n"); break;
-        case 5: printf("CASTLE.\n"); break;
-        case 6: printf("FEELIN' LUCKY.\n"); break;
-        case 7: printf("RAILROAD.\n"); break;
-        case 8: printf("IGLOO.\n"); break;
-        case 9: printf("FARM HOUSE.\n"); break;
-    }
-}
+
 
 int getRentAmount(int opponent, int current, int location, int roll) {
     int nTotalAmt = location * 0.2;
@@ -188,13 +225,13 @@ int isSpecial(int location) {
 }
 
 void payAmount (int * current, int * opponent, int payment) {
-    current -= payment;
-    opponent += payment;
+    *current -= payment;
+    *opponent += payment;
 }
 
 
 int main() {
-    int nPlayer1, nPlayer2, nRoll, nStatus1, nStatus2, nLocation;
+    int nPlayer1, nPlayer2, nRoll, nStatus1, nStatus2, nLocation, nTempAmt;
     int nLoc1 = 0;
     int nLoc2 = 0;
     int nPlayertAmt1 = 200;
@@ -207,9 +244,11 @@ int main() {
     int nPlayerNo = 1;
     int nCurrentAmt, nOpponentAmt;
     int nPassedGo = 0;
-    
+    int nPlayer1Turns = 1;
+    int nPlayer2Turns = 1;
 
-    while(){ // NO CONDITION YET
+    
+    while() { // NO CONDITION YET
         printf("Rolling Dice...\n");
         nRoll = getRandom(1,9);
         printf("Player %d has rolled [%d].\n", nPlayerNo, nRoll);
@@ -223,7 +262,7 @@ int main() {
             nLocation = nLoc2;
         }
 
-        printf("Player %d have landed on ", nPlayerNo);
+        printf("Player %d has landed on ", nPlayerNo);
         getPropertyName(nLocation);
         printf("\n");
 
@@ -235,32 +274,84 @@ int main() {
             }
             else if (nLocation == 4)
             {
-                printf("Player %d have lost your next turn.\n", nPlayerNo);
-                // code line to put user to jail.
+                printf("Player %d has lost your next turn.\n", nPlayerNo);
             }
             else if (nLocation == 6)
             {
                 printf("Rolling dice to determine your luck...\n");
                 nRoll = getRandom(1,9);
-                if (isPrime(nRoll)) 
-                    nCurrentAmt += getRandom(100,200);
-                else if (nRoll == 1)
-                {
+                if (isPrime(nRoll)) {
+                    nTempAmt = getRandom(100,200);
+                    nCurrentAmt += nTempAmt;
+                    printf("Player %d has earned $d!\n", nPlayerNo, nTempAmt);
+                } 
+                    
+                else if (nRoll == 1) {
                     nLocation = 4;
+                    printf("Player %d has landed on ", nPlayerNo);
+                    getPropertyName(nLocation);
+                    printf("\n");
                 }
-                else
-                    nCurrentAmt -= getRandom(50,150);
+                else {
+                    nTempAmt = getRandom(50,150);
+                    nCurrentAmt -= nTempAmt;
+                    printf("Player %d lost $d.\n", nPlayerNo, nTempAmt);
+                }
             }
         }
         else if (isOwned(nOpponent, nCurrent, nLocation)) {
             int nOwe = getRentAmount(nOpponent, nCurrent, nLocation, nRoll);
             printf("Player %d owes $%d", nPlayerNo, nOwe);
-            nCurrentAmt -= nOwe;
+
+            if (nCurrentAmt < nOwe) {
+
+            }
+            else
+                nCurrentAmt -= nOwe;
         }
-        else promptBuy(nCurrent, nLocation);
+        else if (isOwned(nCurrent, nOpponent, nLocation)) {
+            if (!isRenovated(nCurrent, nOpponent, nLocation)) {
+                promptRenovate(&nCurrent, nLocation);
+            }
+        }
+        else promptBuy(&nCurrent, nLocation);
 
 
-        playerSwitch(&nCurrent, &nOpponent, &nPlayerNo, nPlayer1, nPlayer2, nPlayertAmt1, nPlayertAmt2, &nCurrentAmt, &nOpponentAmt);
+        // Deduct Player Turns
+        if (nCurrent == nPlayer1)
+            nPlayer1Turns--;
+        else
+            nPlayer2Turns--;
+
+        // Reset values when both have no more turns
+        if(nPlayer1Turns == 0 && nPlayer2Turns == 0)
+        {
+            nPlayer1Turns = 1;
+            nPlayer2Turns = 1;
+        }
+
+        // Check if user landed on Jail, add/reduce turns
+        if (nLocation == 4) {
+            if (nCurrent == nPlayer1) {
+                nPlayer1Turns = 0;
+                nPlayer2Turns = 2;
+            }
+                
+            else {
+                nPlayer1Turns = 2;
+                nPlayer2Turns = 0;
+            }
+        }
+
+        // If opponent has 1 turn, next player
+        if (nCurrent == nPlayer1) {
+            if (nPlayer2Turns > 0)
+                playerSwitch(&nCurrent, &nOpponent, &nPlayerNo, nPlayer1, nPlayer2, nPlayertAmt1, nPlayertAmt2, &nCurrentAmt, &nOpponentAmt);
+        }
+        else {
+            if (nPlayer1Turns > 0)
+                playerSwitch(&nCurrent, &nOpponent, &nPlayerNo, nPlayer1, nPlayer2, nPlayertAmt1, nPlayertAmt2, &nCurrentAmt, &nOpponentAmt);
+        }
     }
     
 
