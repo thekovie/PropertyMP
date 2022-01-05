@@ -17,9 +17,9 @@
 #define PAY_RENOVATION 50;
 
 /*
-    Description: This function generates a random number ranging from 1 to 9.
+    Description: This function generates a random number ranging from the minimum to maximum.
     Precondition: <precondition / assumption>
-    @return: random number ranging from 1 to 9
+    @return: random number ranging from its given minimum to maximum value
 */
 
 int getRandom(int min, int max) {
@@ -97,18 +97,22 @@ int promptBuy(int * current, int location) {
 
     if (decide == 1) {
         if (location == 2) {
-            *current += 10;
+            *current += pow(10, location-1);
             printf("You have purchased the Electric Company!\n");
             return BUY_ELECTRIC;
         }
             
         else if (location == 7) {
-            *current += 1000000;
+            *current += pow(10, location-1);
+            printf("You have purchased the Railroad Company!\n");
             return BUY_RAILROAD;
         }
 
         else  {
             *current += pow(10, location-1);
+            printf("You have purchased ");
+            getPropertyName(location);
+            printf(" property!\n");
             return location % 7 * 20;
         }
             
@@ -137,36 +141,55 @@ int promptRenovate(int * current, int location) {
 
 void getPropertyName(int location) {
     switch (location) {
-        case 0: printf("GO! COLLECT $200!\n"); break;
-        case 1: printf("TREEHOUSE.\n"); break;
-        case 2: printf("ELECTRIC COMPANY.\n"); break;
-        case 3: printf("BEACH HOUSE.\n"); break;
-        case 4: printf("JAIL TIME.\n"); break;
-        case 5: printf("CASTLE.\n"); break;
-        case 6: printf("FEELIN' LUCKY.\n"); break;
-        case 7: printf("RAILROAD.\n"); break;
-        case 8: printf("IGLOO.\n"); break;
-        case 9: printf("FARM HOUSE.\n"); break;
+        case 0: printf("GO! COLLECT $200"); break;
+        case 1: printf("TREEHOUSE"); break;
+        case 2: printf("ELECTRIC COMPANY"); break;
+        case 3: printf("BEACH HOUSE"); break;
+        case 4: printf("JAIL TIME"); break;
+        case 5: printf("CASTLE"); break;
+        case 6: printf("FEELIN' LUCKY"); break;
+        case 7: printf("RAILROAD"); break;
+        case 8: printf("IGLOO"); break;
+        case 9: printf("FARM HOUSE"); break;
     }
 }
 
 /* New Money parameter - so use it */
 int promptResellProperty(int * current, int owe, int money) {
     int decide, i;
-    int count = 1;
     printf("%s\n%s\n\n",
             "You have insufficent funds!",
             "Please resell one of your properties:");
     for (i = 1; i < 10; i++) {
         if (getDigit(*current, i) == 1 || getDigit(*current, i) == 2) {
-            printf("[%d]\t ", count);
+            printf("[%d]\t ", i);
             getPropertyName(i);
             printf("\n");
         }
-        count++;
     }
     printf(">> ");
     scanf("%d", &decide);
+
+    if (decide == 2) {
+        printf("You have sold the Electric Company back to the bank! You no longer own this property\n");
+        *current -= pow(10, decide-1);
+        return money += 150 / 2;
+    }
+    else if (decide == 7) {
+        printf("You have sold the Railroad Company back to the bank! You no longer own this property.\n");
+        *current -= pow(10, decide-1);
+        return money += 100 / 2;
+    }
+    else {
+        printf("You have sold ");
+        getPropertyName(decide);
+        printf(" property! You no longer own this property.\n");
+        *current -= pow(10, decide-1);
+        return money += decide % 7 * 20;
+
+    }
+
+    
 
 }
 
@@ -264,7 +287,7 @@ int main() {
 
         printf("Player %d has landed on ", nPlayerNo);
         getPropertyName(nLocation);
-        printf("\n");
+        printf(".\n");
 
            
         if (isSpecial(nLocation)) {
@@ -358,3 +381,13 @@ int main() {
 
     return 0;
 }
+
+/*
+    This is to certify that this project is my own work, based on my personal efforts in studying and applying the concepts
+    learned. I have constructed the functions and their respective algorithms and corresponding code all by myself. The
+    program was run, tested, and debugged by my own efforts. I further certify that I have not copied in part or whole
+    or otherwise plagiarized the work of other students and/or persons.
+    
+    John Kovie L. Niño
+    DLSU ID 12109975
+*/
