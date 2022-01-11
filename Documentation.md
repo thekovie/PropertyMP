@@ -71,7 +71,7 @@ int isPrime (int diceRoll) {
 }
 ```
 ```c
-# Check if diceRoll is equal to 0, player goes to jail.
+# Check if diceRoll is equal to 1, player goes to jail.
 ```
 
 ### Not enough cash!
