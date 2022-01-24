@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <time.h>
+#include <conio.h>
 #include <windows.h>
 
 #define COLLECT_GO 200;
@@ -45,7 +46,7 @@ void getPropertyName(int location) {
         case 4: printf("JAIL TIME"); break;
         case 5: printf("CASTLE"); break;
         case 6: printf("FEELIN' LUCKY"); break;
-        case 7: printf("RAILROAD"); break;
+        case 7: printf("RAILROAD COMPANY"); break;
         case 8: printf("IGLOO"); break;
         case 9: printf("FARM HOUSE"); break;
     }
@@ -62,13 +63,15 @@ void listAllProperties(int current) {
     int i;
 
     if (current == 0)
-        printf("You don't own any properties yet!\n\n");
+        printf("You don't own any properties yet!\n");
 
     if (current > 0) {
         for (i = 1; i < 10; i++) {
             if (getDigit(current, i) == 1 || getDigit(current, i) == 2) {
                 printf("[%d]\t ", i);
                 getPropertyName(i);
+                if (getDigit(current, i) == 2)
+                    printf(" (RENOVATED)");
                 printf("\n");
             }
         }
@@ -105,9 +108,8 @@ int isOwned (int opponent, int current, int location) {
         return 1;
     if (nLoc1 == 1 || nLoc1 == 2) // Current player owns it
         return 0;
-    if (nLoc1 == 0 && nLoc2 == 0) // Unowned
-        return 0;
-    
+
+    return 0; // Unowned
 }
 
 int isRenovated (int opponent, int current, int location) {
@@ -189,13 +191,14 @@ int promptBuy(int * current, int location, int money) {
 
 int promptRenovate(int * current, int location) {
     int decide;
-    printf("%s\n%s\n\n%s\n%s\n%s",
-            "You currently own this property",
-            "Please select the following:",
-            "[1]\tRenovate your property",
-            "[2]\tSkip to the next player",
-            ">> ");
-    
+    Sleep(1000);
+    printf("Renovation costs $50!\n\n");
+    Sleep(1000);
+    printf("Please select the following:\n");
+    printf("[1]\tRenovate your property\n");
+    printf("[2]\tSkip to the next player\n");
+    printf(">> ");
+
     scanf("%d", &decide);
 
     if (decide == 1) {
@@ -233,11 +236,11 @@ int promptResellProperty(int * current, int owe, int money) {
             owe -= decide % 7 * 20;
 
         }
+        printf(". You no longer own this property.\n");
     }
 
     if (owe < 0)
         owe = 0;
-    printf(". You no longer own this property.\n");
     return owe;
 }
 
@@ -252,8 +255,8 @@ void introMsg() {
         "This is a turn-based two-player board game.\nPlayers compete to acquire wealth by buying or renting properties.\nThe game ends when a player goes bankrupt, i.e. he does not have enough money to pay rent.",
         "Press ENTER to get started!" );
 
-        getchar();
-        //system("cls");
+        getch();
+        // system("cls");
 }
 
 void playerSwitch(int * current, int * opponent, int * playerno, int * player1, int * player2, int * amtcurrent, int * amtopponent) {
@@ -280,7 +283,7 @@ void playerSwitch(int * current, int * opponent, int * playerno, int * player1, 
 
 
 int getRentAmount(int opponent, int current, int location, int roll) {
-    int nTotalAmt = location * 0.2;
+    int nTotalAmt = getBuyPrice(location) * 0.2;
 
     if (!isRenovated(opponent, current, location)) {
             switch (location) {
@@ -307,7 +310,7 @@ void payAmount (int * current, int * opponent, int payment) {
 
 
 int isValidToPlay (int money, int current, int owe) {
-    // Check if no properties and money left and annot pay rent anymore.
+    // Check if no properties and money left and cannot pay rent anymore.
     if (current == 0 && money < owe)
         return 0;
     return 1;
@@ -339,7 +342,7 @@ int main() {
     
     while(isValidToPlay(nOpponentAmt, nOpponent, nOwe)) {
         printf("===========================================\n");
-        printf("Player %d's Current Amount: $%d\n", nPlayerNo, nCurrentAmt);
+        printf("Player %d's Current Balance: $%d\n", nPlayerNo, nCurrentAmt);
         printf("===========================================\n");
         Sleep(1000);
         printf("Player %d's Properties:\n", nPlayerNo);
@@ -370,15 +373,26 @@ int main() {
         printf(".\n");
         Sleep(1000);
 
+
+        // Check if user has passed thru GO or Location 0
+        if (nPassedGo == 1 && nLocation != 0) {
+            nCurrentAmt += 200;
+            printf("Player %d passed through GO! Collect $200.\n", nPlayerNo);
+            Sleep(1000);
+            printf("===========================================\n");
+            printf("Player %d's NEW Balance: $%d\n", nPlayerNo, nCurrentAmt);
+            printf("===========================================\n");
+        }
+
         // Check if location lands on the special locations
         if (isSpecial(nLocation)) {
-            if (nPassedGo == 1 || nLocation == 0) {  // nPassedGo boolean TRUE (passed thru loc 0) or nLocation lands on 0.
+            if (nLocation == 0) {  // nLocation lands on 0.
                 nCurrentAmt += 200;
                 printf("Player %d collects $200!\n", nPlayerNo);
             }
             else if (nLocation == 4) // Lands on jail
             {
-                printf("Player %d has lost your next turn.\n", nPlayerNo);
+                printf("Player %d has lost its next turn.\n", nPlayerNo);
             }
             else if (nLocation == 6) // Feelin' Lucky
             {
@@ -429,8 +443,9 @@ int main() {
             }
         }
         else if (isOwned(nCurrent, nOpponent, nLocation)) { // If current player owns it
-            if (!isRenovated(nCurrent, nOpponent, nLocation) || nLocation != 2 || nLocation != 7) {
-                promptRenovate(&nCurrent, nLocation);
+            printf("Player %d currently own this property!\n\n", nPlayerNo);
+            if ((!isRenovated(nCurrent, nOpponent, nLocation)) && (nLocation == 1 || nLocation == 3 || nLocation == 9)) {
+                nCurrentAmt -= promptRenovate(&nCurrent, nLocation);
             }
         }
         else 
@@ -469,6 +484,12 @@ int main() {
             }
         }
 
+        // Needed to add if condition below to stop redundancy
+        printf("===========================================\n");
+        printf("Player %d's NEW Balance: $%d\n", nPlayerNo, nCurrentAmt);
+        printf("===========================================\n");
+        printf("\n\nPress ENTER to continue.\n");
+
         // If opponent has 1 turn, next player
         if (nPlayerNo == 1) {
             if (nPlayer2Turns > 0)
@@ -479,9 +500,8 @@ int main() {
                 playerSwitch(&nCurrent, &nOpponent, &nPlayerNo, &nPlayer1, &nPlayer2, &nCurrentAmt, &nOpponentAmt);
         }
         nPassedGo = 0;
-        printf("\n\nPress ENTER to continue.\n");
-        getchar();
-        system("cls");
+        getch();
+        // system("cls");
     }
     
     // getSummary(parameters);
@@ -503,10 +523,12 @@ int main() {
     NOTES 1/16/2021
     1. Announce winner (make getSummary function)
     2. Fix UI and UX
-    3. Go and collect $200 go check [CHECKED]
-    4. Fix getRentAmount Function 
-    5. If lands own property doesnt prompt to renovate. [CHECKED]
-    6. If else condtion to skip buying property esp Option 2. [CHECKED]
-    7. Show amount of renovation costs.
+    3. Go and collect $200 go check [FIXED]
+    4. Fix getRentAmount Function [FIXED]
+    5. If lands own property doesnt prompt to renovate. [FIXED]
+    6. If else condtion to skip buying property esp Option 2. [FIXED]
+    7. Show amount of renovation costs. [FIXED]
     8. Invalid inputs for ALL choices.
+    9. OUTPUTS WHICH SPECIFIC PROPERTY IS RENOVATED. [FIXED]
+    10. FIX PROMPTRESELL
 */
