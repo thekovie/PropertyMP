@@ -51,5 +51,7 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
-# idea
-.idea
+# folder
+cmake-build-debug/
+.idea/
+.vscode/
