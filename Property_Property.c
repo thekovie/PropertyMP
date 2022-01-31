@@ -22,13 +22,24 @@
 
 /*
     Description: This function generates a random number ranging from the minimum to maximum.
-    Precondition: <precondition / assumption>
+    Precondition: The parameters given are integers.
+    @param min: The minimum number.
+    @param max: The maximum number.
     @return: random number ranging from its given minimum to maximum value
 */
 
 int getRandom(int min, int max) {
        return min + rand() % (max + 1 - min);
 }
+
+/*
+    Description: This function determines what location / property the player landed on.
+    Precondition: The parameters given are integers.
+    @param nLocation: The location of the player.
+    @param nDiceRoll: The dice roll of the player.
+    @param passedGo: The variable that determines if the player passed Go.
+    @return returns the location of player
+*/
 
 int getLocation(int nLocation, int nDiceRoll, int * passedGo){
     if (nLocation + nDiceRoll > 9) {
@@ -37,6 +48,13 @@ int getLocation(int nLocation, int nDiceRoll, int * passedGo){
     }
     return nLocation += nDiceRoll;
 }
+
+/*
+    Description: This function prints the property's name that the player has landed on.
+    Precondition: The parameter given are integers.
+    @param location: The location of the player.
+    @return returns the name of the property.
+*/
 
 void getPropertyName(int location) {
     switch (location) {
@@ -53,12 +71,26 @@ void getPropertyName(int location) {
     }
 }
 
+/*
+    Description: This function returns the specific digit of the given number.
+    Precondition: The parameters given is an integer.
+    @param current: The current player's owned properties.
+    @param location: The location of the player.
+    @return returns the specific digit of the given number.
+*/
+
 int getDigit(int current, int location) {
     int nDivisor = pow(10, location - 1);
     int nSplit = current / nDivisor;
     int nFinal = nSplit % 10;
     return nFinal;
 }
+
+/*
+    Description: This function prints the player's owned properties.
+    Precondition: The parameter given are integers.
+    @param current: The current player's owned properties.
+*/
 
 void listAllProperties(int current) {
     int i;
@@ -81,7 +113,7 @@ void listAllProperties(int current) {
 
 /*
     Description:        This functions check if the number given is Prime or not
-    Precondition:       <precondition / assumption>
+    Precondition:       The parameter given is an integer
     @param  diceRoll =  the value needed to identify if Prime or not.
     @return 1        =  returns a TRUE boolean
     @return 0        =  returns a FALSE boolean
@@ -100,6 +132,14 @@ int isPrime (int diceRoll) {
     return 0; 
 }
 
+/*
+    Description: This function checks if the current or opponent owns the property
+    Precondition: The parameters given are integers.
+    @param current: The current player's owned properties.
+    @param opponent: The opponent's owned properties.
+    @param location: The location of the player landed on.
+    @return returns a boolean value.
+*/
 
 int isOwned (int opponent, int current, int location) {
     int nLoc1 = getDigit(current, location); // Current player
@@ -113,6 +153,14 @@ int isOwned (int opponent, int current, int location) {
     return 0; // Unowned
 }
 
+/*
+    Description: This function checks if the property landed on is renovated or not.
+    Precondition: The parameters given are integers.
+    @param current: The current player's owned properties.
+    @param location: The location of the player landed on.
+    @return returns a boolean value.
+*/
+
 int isRenovated (int opponent, int current, int location) {
     int nLoc1 = getDigit(current, location); // Current player
     int nLoc2 = getDigit(opponent, location); // Opponent player
@@ -124,6 +172,13 @@ int isRenovated (int opponent, int current, int location) {
     return 0;
 }
 
+/*
+    Description: This function returns the buy price of the property.
+    Precondition: The parameter is an integer.
+    @param location: The location of the player landed on.
+    return returns the buy price of the property.
+*/
+
 int getBuyPrice (int location) {
     switch (location)
     {
@@ -133,11 +188,28 @@ int getBuyPrice (int location) {
     }
 }
 
+/*
+    Description: This function returns a boolean value if the player can buy the property or pay rent.
+    Precondition: The parameters given are integers.
+    @param money: The current player's money.
+    @param price: The price of the property.
+    @return returns a boolean value.
+*/
+
 int hasMoney (int money, int price) {
     if (money >= price)
         return 1;
     return 0;
 }
+
+/*
+    Description: This function prompts if the player wants to buy the property or not.
+    Precondition: The parameters given are integers.
+    @param current: The current player's owned properties.
+    @param location: The location of the player landed on.
+    @param money: The current player's money.
+    return: returns the price of the property or 0 if the player doesn't want to buy it, also updates current if the player bought the property.
+*/
 
 int promptBuy(int * current, int location, int money) {
     char decide;
@@ -195,6 +267,14 @@ int promptBuy(int * current, int location, int money) {
     return 0;
 }
 
+/*
+    Description: This function prompts if the player wants to renovate or not.
+    Precondition: The parameters given are integers.
+    @param current: The current player's owned properties.
+    @param location: The location of the player landed on.
+    return: returns the renovation price of the property or 0 if the player doesn't want to renovate it, also updates current if the player renovated the property.
+*/
+
 int promptRenovate(int * current, int location) {
     char decide;
     do {
@@ -220,6 +300,15 @@ int promptRenovate(int * current, int location) {
     return 0;
 }
 
+/*
+    Description: This function prompts to resell properties.
+    Precondition: The parameters given are integers.
+    @param current: The current player's owned properties.
+    @param opponent: The opponent's owned properties.
+    @param owe: The amount of money the player owes.
+    @param money: The current player's money.
+    return: Updates current properties and money of the player.
+*/
 
 void promptResellProperty(int * current, int * opponent, int owe, int * money) {
     int decide;
@@ -302,7 +391,22 @@ void introMsg() {
         system("clear");
 }
 
-void playerSwitch(int * current, int * opponent, int * playerno, int * player1, int * player2, int * amtcurrent, int * amtopponent) {
+/*
+    Description: This function switches the turn of the players.
+    Precondition: The parameters given are integers.
+    @param current: The current player's owned properties.
+    @param opponent: The opponent's owned properties.
+    @param playerno: The current player's number.
+    @param player1: The first player's money balance.
+    @param player2: The second player's money balance.
+    @param amtcurrent: The amount of money the current player has.
+    @param amtopponent: The amount of money the opponent has.
+    return: transfers the data of the current player to the opponent and vice versa.
+*/
+
+void playerSwitch(int * current, int * opponent, int * playerno, 
+                  int * player1, int * player2, int * amtcurrent, 
+                  int * amtopponent) {
     int temp;
 
     if (*playerno == 1) {
@@ -323,7 +427,15 @@ void playerSwitch(int * current, int * opponent, int * playerno, int * player1, 
     *amtopponent = temp;
 }
 
-
+/*
+    Description: This function gets the rent amount of the property.
+    Precondition: The parameters given are integers.
+    @param opponent: The opponent's owned properties.
+    @param current: The current player's owned properties.
+    @param location: Player's current location.
+    @param roll: Current dice roll the player has.
+    return: The rent amount of the property.
+*/
 
 int getRentAmount(int opponent, int current, int location, int roll) {
     int nTotalAmt = getBuyPrice(location) * 2; // getBuyPrice(location) * 0.2
@@ -340,17 +452,41 @@ int getRentAmount(int opponent, int current, int location, int roll) {
     return nTotalAmt;
 }
 
+/*
+    Description: Checks if the property landed on Property 1, 4, or 6.
+    Precondition: The parameters given are integers.
+    @param location: Player's current location.
+    return: Returns true if the player landed on Property 1, 4, or 6.
+*/
+
 int isSpecial(int location) {
     if (location == 0 || location == 4 || location == 6)
         return 1;
     return 0;
 }
 
+/*
+    Description: Pays amount to the opponent.
+    Precondition: The parameters given are integers.
+    @param current: The current player's money.
+    @param opponent: The opponent's money.
+    @param payment: The amount to pay.
+    return: Deducts the amount from the current player's money and adds it to the opponent's money.
+*/
+
 void payAmount (int * current, int * opponent, int payment) {
     *current -= payment;
     *opponent += payment;
 }
 
+/*
+    Description: Checks if the player can still play the game.
+    Precondition: The parameters given are integers.
+    @param money: The current player's money.
+    @param current: The current player's owned properties.
+    @param owe: The amount of money the player owes.
+    return: Returns true if the player can still play the game.
+*/
 
 int isValidToPlay (int money, int current, int owe) {
     // Check if no properties and money left and cannot pay rent anymore.
@@ -359,8 +495,23 @@ int isValidToPlay (int money, int current, int owe) {
     return 1;
 }
 
-void getGameSummary(int player1, int player2, int money1, int money2, int playerno) {
+/*
+    Description: prints end game summary and announces winner.
+    Precondition: The parameters given are integers.
+    @param player1: The first player's properties.
+    @param player2: The second player's properties.
+    @param money1: The first player's money.
+    @param money2: The second player's money.
+*/
+
+void getGameSummary(int player1, int player2, int money1, int money2) {
     char enter;
+
+    if (player1 == 0)
+        printf("%s\n%s\n\n", "Player 2 wins!", "Congratulations!");
+    else
+        printf("%s\n%s\n\n", "Player 1 wins!", "Congratulations!");
+    
     printf("=====================================\n");
     printf("            Game Summary\n");
     printf("=====================================\n\n");
@@ -376,21 +527,13 @@ void getGameSummary(int player1, int player2, int money1, int money2, int player
     scanf("%c", &enter);
 }
 
-void announceWinner(int player1, int player2) {
-    if (player1 == 0)
-        printf("%s\n%s\n\n", "Player 2 wins!", "Congratulations!");
-    else
-        printf("%s\n%s\n\n", "Player 1 wins!", "Congratulations!");
-}
-
-
 int main() {
     srand(time(NULL));
     int nRoll, nLocation, nTempAmt;
     int nLoc1 = 0;
     int nLoc2 = 0;
-    int nPlayer1 = 11010110;
-    int nPlayer2 = 100000002;
+    int nPlayer1 = 0;
+    int nPlayer2 = 0;
 
     introMsg();
 
@@ -444,52 +587,52 @@ int main() {
 
 
         // Check if user has passed thru GO or Location 0
-        // if (nPassedGo == 1 && nLocation != 0) {
-        //     nCurrentAmt += 200;
-        //     printf("Player %d passed through GO! Collect $200.\n", nPlayerNo);
-        //     sleep(1);
-        //     printf("===========================================\n");
-        //     printf("Player %d's NEW Balance: $%d\n", nPlayerNo, nCurrentAmt);
-        //     printf("===========================================\n");
-        // }
+        if (nPassedGo == 1 && nLocation != 0) {
+            nCurrentAmt += 200;
+            printf("Player %d passed through GO! Collect $200.\n", nPlayerNo);
+            sleep(1);
+            printf("===========================================\n");
+            printf("Player %d's NEW Balance: $%d\n", nPlayerNo, nCurrentAmt);
+            printf("===========================================\n");
+        }
 
         // Check if location lands on the special locations
         if (isSpecial(nLocation)) {
             if (nLocation == 0) {  // nLocation lands on 0.
-                // nCurrentAmt += 200;
+                nCurrentAmt += 200;
                 printf("Player %d collects $200!\n", nPlayerNo);
             }
             else if (nLocation == 4) // Lands on jail
             {
                 printf("Player %d has lost its next turn.\n", nPlayerNo);
             }
-            // else if (nLocation == 6) // Feelin' Lucky
-            // {
-            //     printf("Rolling dice to determine your luck...\n");
-            //     nRoll = getRandom(1,6);
-            //     sleep(1);
-            //     printf("Player %d has has rolled [ %d ].\n", nPlayerNo, nRoll);
-            //     sleep(1);
+            else if (nLocation == 6) // Feelin' Lucky
+            {
+                printf("Rolling dice to determine your luck...\n");
+                nRoll = getRandom(1,6);
+                sleep(1);
+                printf("Player %d has has rolled [ %d ].\n", nPlayerNo, nRoll);
+                sleep(1);
 
-            //     if (isPrime(nRoll)) { // If the roll is a prime number
-            //         nTempAmt = getRandom(100,200);
-            //         nCurrentAmt += nTempAmt;
-            //         printf("Player %d has earned $%d!\n", nPlayerNo, nTempAmt);
-            //     } 
+                if (isPrime(nRoll)) { // If the roll is a prime number
+                    nTempAmt = getRandom(100,200);
+                    nCurrentAmt += nTempAmt;
+                    printf("Player %d has earned $%d!\n", nPlayerNo, nTempAmt);
+                } 
                 
-            //     else if (nRoll == 1) { // If Roll lands on 1
-            //         nLocation = 4;
-            //         printf("Player %d has landed on ", nPlayerNo);
-            //         getPropertyName(nLocation);
-            //         printf("\nPlayer %d have lost its turn!\n", nPlayerNo);
+                else if (nRoll == 1) { // If Roll lands on 1
+                    nLocation = 4;
+                    printf("Player %d has landed on ", nPlayerNo);
+                    getPropertyName(nLocation);
+                    printf("\nPlayer %d have lost its turn!\n", nPlayerNo);
 
-            //     }
-            //     else {
-            //         nTempAmt = getRandom(50,150);
-            //         nCurrentAmt -= nTempAmt;
-            //         printf("Player %d lost $%d.\n", nPlayerNo, nTempAmt);
-            //     }
-            // }
+                }
+                else {
+                    nTempAmt = getRandom(50,150);
+                    nCurrentAmt -= nTempAmt;
+                    printf("Player %d lost $%d.\n", nPlayerNo, nTempAmt);
+                }
+            }
         }
         else if (isOwned(nOpponent, nCurrent, nLocation)) { // If opponent owns it
             nOwe = getRentAmount(nOpponent, nCurrent, nLocation, nRoll);
@@ -578,8 +721,7 @@ int main() {
         //system("cls");
         //system("clear");
     }
-    announceWinner(nCurrent,nOpponent);
-    getGameSummary(nCurrent, nOpponent, nCurrentAmt, nOpponentAmt, nPlayerNo);
+    getGameSummary(nCurrent, nOpponent, nCurrentAmt, nOpponentAmt);
 
     return 0;
 }
@@ -592,18 +734,4 @@ int main() {
     
     John Kovie L. Niño
     DLSU ID 12109975
-*/
-
-/*
-    NOTES 1/16/2021
-    1. Announce winner (make getSummary function) [DONE]
-    2. Fix UI and UX
-    3. Go and collect $200 go check [FIXED]
-    4. Fix getRentAmount Function [FIXED]
-    5. If lands own property doesnt prompt to renovate. [FIXED]
-    6. If else condtion to skip buying property esp Option 2. [FIXED]
-    7. Show amount of renovation costs. [FIXED]
-    8. Invalid inputs for ALL choices. [DONE]
-    9. OUTPUTS WHICH SPECIFIC PROPERTY IS RENOVATED. [FIXED]
-    10. FIX PROMPTRESELL [FIXED]
 */
