@@ -105,7 +105,7 @@ int getRandom(int min, int max) {
 }
 
 /*
-    Description: This function determines what location / property the player landed on.
+    Description: This function determines what location / property number the player landed on.
     Precondition: The parameters given are integers.
     @param nLocation: The location of the player.
     @param nDiceRoll: The dice roll of the player.
