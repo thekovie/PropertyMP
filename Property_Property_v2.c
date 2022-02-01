@@ -2,7 +2,7 @@
     Description:       This is a turn-based two-player board game.
     Programmed by:     John Kovie L. Niño S15B
     Last modified:     February 1, 2022
-    Version:           1.0
+    Version:           2.0
     Acknowledgements:  Used the Standard Library (stdlib.h) and the Math Library (math.h) for making the program possible.
 */
 
@@ -16,8 +16,80 @@
 #define COLLECT_GO 200
 #define BUY_ELECTRIC 150
 #define BUY_RAILROAD 100
-#define PAY_RAILROAD_RENT 35
-#define PAY_RENOVATION 50
+
+int gameConfiguration(int * nCash, int * rentRailroad, int * cashCond,
+                       int * multiplierElectric, int * minPrimeAmt,
+                       int * maxPrimeAmt, int * minAmt, 
+                       int * maxAmt, int * costRenovation) {
+        
+        char choice;
+        while (choice != '0') {
+            system("cls || clear");
+            printf("----------------------[ GAME CONFIGURATION ]--------------------------\n");
+            printf("            Select the following you want to configure:\n\n");
+            printf("1 - Starting Cash: \t\t\t\t$%d\n", *nCash);
+            printf("2 - [RENT] Electric Company: \t\t\tdiceRoll * [ %d ] <- The one inside the bracket will be exchanged.\n", *multiplierElectric);
+            printf("3 - [RENT] Railroad: \t\t\t\t$%d \n", *rentRailroad);
+            printf("4 - [FEELIN' LUCKY] Minimum Prime Amount: \t$%d\n", *minPrimeAmt);
+            printf("5 - [FEELIN' LUCKY] Maximum Prime Amount: \t$%d\n", *maxPrimeAmt);
+            printf("6 - [FEELIN' LUCKY] Minimum Non-Prime Amount: \t$%d\n", *minAmt);
+            printf("7 - [FEELIN' LUCKY] Maximum Non-Prime Amount: \t$%d\n", *maxAmt);
+            printf("8 - RENOVATION Cost: \t\t\t\t$%d\n", *costRenovation);
+            printf("9 - [END-GAME CONDITION] Lowest Cash: \t\t$%d\n", *cashCond);
+            printf("\n---------------------------------------------------------------------\n");
+            printf("0 - Exit Game Configuration\n\n");
+            printf(">> ");
+            scanf(" %c", &choice);
+
+            sleep(1);
+            switch (choice) {
+                case '1':
+                    printf("\nEnter the new starting cash: ");
+                    scanf("%d", nCash);
+                    break;
+                case '2':
+                    printf("\nEnter the new rent multiplier for Electric Company: ");
+                    scanf("%d", multiplierElectric);
+                    break;
+                case '3':
+                    printf("\nEnter the new rent cost of Raiload: ");
+                    scanf("%d", rentRailroad);
+                    break;
+                case '4':
+                    printf("\nEnter the new minimum prime amount: ");
+                    scanf("%d", minPrimeAmt);
+                    break;
+                case '5':
+                    printf("\nEnter the new maximum prime amount: ");
+                    scanf("%d", maxPrimeAmt);
+                    break;
+                case '6':
+                    printf("\nEnter the new minimum non-prime amount: ");
+                    scanf("%d", minAmt);
+                    break;
+                case '7':
+                    printf("\nEnter the new maximum non-prime amount: ");
+                    scanf("%d", maxAmt);
+                    break;
+                case '8':
+                    printf("\nEnter the new Renovation Cost: ");
+                    scanf("%d", costRenovation);
+                    break;
+                case '9':
+                    printf("\nEnter the lowest cash-on-hand condition: ");
+                    scanf("%d", cashCond);
+                    break;
+                case '0':
+                    return 0;
+                default:
+                    printf("\nERROR: Invalid choice. Try Again!\n");
+                    break;
+            }
+            sleep(1);
+        }
+        system("cls || clear");
+        return 0;
+}
 
 /*
     Description: This function generates a random number ranging from the minimum to maximum.
@@ -227,7 +299,7 @@ int promptBuy(int * current, int location, int money) {
             "[2]\tNot interested",
             ">> ");
     
-            scanf("%c", &decide);
+            scanf(" %c", &decide);
             if (!(decide == '1' || decide == '2'))
                 printf("\nERROR: Invalid input. Please try again.\n\n");
         } while(!(decide == '1' || decide == '2'));
@@ -274,7 +346,7 @@ int promptBuy(int * current, int location, int money) {
     return: returns the renovation price of the property or 0 if the player doesn't want to renovate it, also updates current if the player renovated the property.
 */
 
-int promptRenovate(int * current, int location) {
+int promptRenovate(int * current, int location, int renPrice) {
     char decide;
     do {
         sleep(1);
@@ -286,7 +358,7 @@ int promptRenovate(int * current, int location) {
         "[2]\tNot interested",
         ">> ");
     
-        scanf("%c", &decide);
+        scanf(" %c", &decide);
 
         if (!(decide == '1' || decide == '2'))
             printf("\nERROR:Invalid input. Please try again.\n\n");
@@ -294,7 +366,7 @@ int promptRenovate(int * current, int location) {
 
     if (decide == '1') {
         *current += pow(10, location-1);
-        return PAY_RENOVATION;
+        return renPrice;
     }
     return 0;
 }
@@ -377,14 +449,13 @@ void promptResellProperty(int * current, int * opponent, int owe, int * money) {
     Description: Outputs introductory message as program runs
 */
 void introMsg() {
-    printf("%s\n%s\n%s\n\n%s\n\n%s\n",
+    printf("%s\n%s\n%s\n\n%s\n\n",
         "=====================================",
         "|| Welcome to Property...Property! ||",
         "=====================================",
-        "This is a turn-based two-player board game.\nPlayers compete to acquire wealth by buying or renting properties.\nThe game ends when a player goes bankrupt, i.e. he does not have enough money to pay rent.",
-        "Press ENTER to get started!" );
+        "This is a turn-based two-player board game.\nPlayers compete to acquire wealth by buying or renting properties.\nThe game ends when a player goes bankrupt, i.e. he does not have enough money to pay rent.");
 
-        getchar();
+        sleep(3);
         system("cls || clear");
 }
 
@@ -434,13 +505,13 @@ void playerSwitch(int * current, int * opponent, int * playerno,
     return: The rent amount of the property.
 */
 
-int getRentAmount(int opponent, int current, int location, int roll) {
+int getRentAmount(int opponent, int current, int location, int roll, int multiplier, int railroad) {
     int nTotalAmt = getBuyPrice(location) * 0.2;
 
     if (!isRenovated(opponent, current, location)) {
             switch (location) {
-                case 2: return roll * 8; // ELECTRIC RENT
-                case 7: return PAY_RAILROAD_RENT;
+                case 2: return roll * multiplier; // ELECTRIC RENT
+                case 7: return railroad; // RAILROAD RENT
             }
         }
     else 
@@ -524,19 +595,48 @@ void getGameSummary(int player1, int player2, int money1, int money2) {
 
 int main() {
     srand(time(NULL));
-    int nRoll, nLocation, nTempAmt;
-    int nLoc1 = 0;
-    int nLoc2 = 0;
-    int nPlayer1 = 0;
-    int nPlayer2 = 0;
+    
+    // Player 1 and 2 Current Stats
+    int nLoc1 = 0, nLoc2 = 0;
+    int nPlayer1 = 0, nPlayer2 = 0;
 
+    // Configurable variables
+    int nInitialMoney = 200;
+    int nCashCondition = 0;
+    int nMultiplierElectric = 8;
+    int nRentRailroad = 35;
+    int nMinPrimeAmt = 100;
+    int nMaxPrimeAmt = 200;
+    int nMinNonAmt = 50;
+    int nMaxNonAmt = 150;
+    int nRenovationCost = 50;
+
+    // Intro Message
     introMsg();
 
+    char choice;
+    do {
+        printf("\nPlease select the following:\n");
+        printf("1. Configure Game\n2. Start Game\n");
+        printf(">> ");
+        scanf(" %c", &choice);
+
+         if (choice == '1')
+            gameConfiguration(&nInitialMoney, &nRentRailroad, &nCashCondition, &nMultiplierElectric, &nMinPrimeAmt, &nMaxPrimeAmt, &nMinNonAmt, &nMaxNonAmt, &nRenovationCost);
+
+        if (!(choice == '1' || choice == '2'))
+            printf("\nInvalid input. Please try again.\n");
+
+    } while (!(choice == '1' || choice == '2'));
+    system("cls || clear");
+
+    // Initialize the game
+    int nRoll, nLocation, nTempAmt;
     int nCurrent = nPlayer1;
     int nOpponent = nPlayer2;
     int nPlayerNo = 1;
-    int nCurrentAmt = 200;
-    int nOpponentAmt = 200;
+    int nCurrentAmt = nInitialMoney;
+    int nOpponentAmt = nInitialMoney;
     int nPassedGo = 0;
     int nPlayer1Turns = 1;
     int nPlayer2Turns = 1;
@@ -610,7 +710,7 @@ int main() {
                 sleep(1);
 
                 if (isPrime(nRoll)) { // If the roll is a prime number
-                    nTempAmt = getRandom(100,200);
+                    nTempAmt = getRandom(nMinPrimeAmt, nMaxPrimeAmt);
                     nCurrentAmt += nTempAmt;
                     printf("Player %d has earned $%d!\n", nPlayerNo, nTempAmt);
                 } 
@@ -623,14 +723,14 @@ int main() {
 
                 }
                 else {
-                    nTempAmt = getRandom(50,150);
+                    nTempAmt = getRandom(nMinNonAmt, nMaxNonAmt);
                     nCurrentAmt -= nTempAmt;
                     printf("Player %d lost $%d.\n", nPlayerNo, nTempAmt);
                 }
             }
         }
         else if (isOwned(nOpponent, nCurrent, nLocation)) { // If opponent owns it
-            nOwe = getRentAmount(nOpponent, nCurrent, nLocation, nRoll);
+            nOwe = getRentAmount(nOpponent, nCurrent, nLocation, nRoll, nMultiplierElectric, nRentRailroad);
             sleep(1);
             printf("Player %d owes $%d to the opponent.\n", nPlayerNo, nOwe);
             sleep(1);
@@ -655,7 +755,7 @@ int main() {
         else if (isOwned(nCurrent, nOpponent, nLocation)) { // If current player owns it
             printf("Player %d currently own this property!\n\n", nPlayerNo);
             if (!(isRenovated(nCurrent, nOpponent, nLocation) || nLocation == 2 || nLocation == 7)) {
-                nCurrentAmt -= promptRenovate(&nCurrent, nLocation);
+                nCurrentAmt -= promptRenovate(&nCurrent, nLocation, nRenovationCost);
             }
         }
         else 
@@ -729,4 +829,10 @@ int main() {
     
     John Kovie L. Niño
     DLSU ID 12109975
+*/
+
+/*
+    FIX:
+    - gameConfiguration Function put anyvalue rather than 0-9 goes weird.
+    - Add Activation for End Game Money condition using boolean values.
 */
