@@ -805,7 +805,7 @@ int main() {
             printf("===========================================\n");
             printf("Player %d's NEW Balance: $%d\n", nPlayerNo, nCurrentAmt);
             printf("===========================================\n");
-            printf("\n\nPress ENTER to continue.");
+            printf("\n\nPress ENTER to continue.\n");
             getchar();
         }
 
@@ -821,7 +821,7 @@ int main() {
         nPassedGo = 0;
 
 
-        system("cls || clear");
+        system("clear || cls");
     }
     getGameSummary(nCurrent, nOpponent, nCurrentAmt, nOpponentAmt);
 

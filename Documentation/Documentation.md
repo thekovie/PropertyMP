@@ -4,18 +4,7 @@ This repository started at December 23, 2021.
 
 ## <u>Formulas or Algorithms</u>
 
-### Variables
-```c
-# Monitor 9-digit integer
-int nPlayer1; 
-int nPlayer2;
-```
-
-```c
-# Monitor amount left
-int nPlayertAmt1 = 200;
-int nPlayertAmt2 = 200;
-```
+### Getting Location
 
 ### Buying Properties
 ```c

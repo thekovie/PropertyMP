@@ -11,7 +11,6 @@
 #include <math.h>
 #include <time.h>
 #include <unistd.h>
-#include <conio.h>
 
 #define COLLECT_GO 200
 #define BUY_ELECTRIC 150
