@@ -11,7 +11,6 @@
 #include <math.h>
 #include <time.h>
 #include <unistd.h>
-#include <conio.h>
 
 #define COLLECT_GO 200
 #define BUY_ELECTRIC 150
@@ -43,7 +42,6 @@ int gameConfiguration(int * nCash, int * rentRailroad, int * activateCond,
             printf(">> ");
             scanf(" %c", &choice);
 
-            system("cls || clear");
             sleep(1);
             switch (choice) {
                 case '1':
@@ -327,7 +325,6 @@ int promptBuy(int * current, int location, int money) {
                 getPropertyName(location);
             }
             printf("!\n");
-            sleep(1);
             return nPrice;
         } 
 
@@ -459,7 +456,6 @@ void introMsg() {
         "This is a turn-based two-player board game.\nPlayers compete to acquire wealth by buying or renting properties.\nThe game ends when a player goes bankrupt, i.e. he does not have enough money to pay rent.");
 
         sleep(3);
-        system("cls || clear");
 }
 
 /*
@@ -809,7 +805,8 @@ int main() {
             printf("===========================================\n");
             printf("Player %d's NEW Balance: $%d\n", nPlayerNo, nCurrentAmt);
             printf("===========================================\n");
-            printf("\n\nPress ENTER to continue.\n");
+            printf("\n\nPress ENTER to continue.");
+            getchar();
         }
 
         // If opponent has 1 turn, next player
@@ -822,8 +819,7 @@ int main() {
                 playerSwitch(&nCurrent, &nOpponent, &nPlayerNo, &nPlayer1, &nPlayer2, &nCurrentAmt, &nOpponentAmt);
         }
         nPassedGo = 0;
-        sleep(1);
-        getchar();
+
 
         system("cls || clear");
     }
@@ -840,10 +836,4 @@ int main() {
     
     John Kovie L. Niño
     DLSU ID 12109975
-*/
-
-/*
-    FIX:
-    - gameConfiguration Function put anyvalue rather than 0-9 goes weird.
-    - Add Activation for End Game Money condition using boolean values.
 */
