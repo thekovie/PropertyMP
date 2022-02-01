@@ -17,10 +17,9 @@
 #define BUY_ELECTRIC 150
 #define BUY_RAILROAD 100
 
-int gameConfiguration(int * nCash, int * rentRailroad, int * cashCond,
-                       int * multiplierElectric, int * minPrimeAmt,
-                       int * maxPrimeAmt, int * minAmt, 
-                       int * maxAmt, int * costRenovation) {
+int gameConfiguration(int * nCash, int * rentRailroad, int * activateCond,
+                      int * cashCond, int * multiplierElectric, int * minPrimeAmt,
+                      int * maxPrimeAmt, int * minAmt, int * maxAmt, int * costRenovation) {
         
         char choice;
         while (choice != '0') {
@@ -28,19 +27,23 @@ int gameConfiguration(int * nCash, int * rentRailroad, int * cashCond,
             printf("----------------------[ GAME CONFIGURATION ]--------------------------\n");
             printf("            Select the following you want to configure:\n\n");
             printf("1 - Starting Cash: \t\t\t\t$%d\n", *nCash);
-            printf("2 - [RENT] Electric Company: \t\t\tdiceRoll * [ %d ] <- The one inside the bracket will be exchanged.\n", *multiplierElectric);
+            printf("2 - [RENT] Electric Company Multiplier: \tx%d\n", *multiplierElectric);
             printf("3 - [RENT] Railroad: \t\t\t\t$%d \n", *rentRailroad);
             printf("4 - [FEELIN' LUCKY] Minimum Prime Amount: \t$%d\n", *minPrimeAmt);
             printf("5 - [FEELIN' LUCKY] Maximum Prime Amount: \t$%d\n", *maxPrimeAmt);
             printf("6 - [FEELIN' LUCKY] Minimum Non-Prime Amount: \t$%d\n", *minAmt);
             printf("7 - [FEELIN' LUCKY] Maximum Non-Prime Amount: \t$%d\n", *maxAmt);
             printf("8 - RENOVATION Cost: \t\t\t\t$%d\n", *costRenovation);
-            printf("9 - [END-GAME CONDITION] Lowest Cash: \t\t$%d\n", *cashCond);
+            if (!*activateCond)
+                printf("9 - [END-GAME CONDITION] Lowest Cash: \t\tDISABLED");
+            else
+                printf("9 - [END-GAME CONDITION] Lowest Cash: \t\t$%d\n", *cashCond);
             printf("\n---------------------------------------------------------------------\n");
-            printf("0 - Exit Game Configuration\n\n");
+            printf("0 - Exit Game Configuration and Start Game!\n\n");
             printf(">> ");
             scanf(" %c", &choice);
 
+            system("cls || clear");
             sleep(1);
             switch (choice) {
                 case '1':
@@ -78,6 +81,7 @@ int gameConfiguration(int * nCash, int * rentRailroad, int * cashCond,
                 case '9':
                     printf("\nEnter the lowest cash-on-hand condition: ");
                     scanf("%d", cashCond);
+                    *activateCond = 1;
                     break;
                 case '0':
                     return 0;
@@ -87,7 +91,6 @@ int gameConfiguration(int * nCash, int * rentRailroad, int * cashCond,
             }
             sleep(1);
         }
-        system("cls || clear");
         return 0;
 }
 
@@ -556,10 +559,17 @@ void payAmount (int * current, int * opponent, int payment) {
     return: Returns true if the player can still play the game.
 */
 
-int isValidToPlay (int money, int current, int owe) {
+int isValidToPlay (int money, int current, int owe, int activatecash, int cashcondition) {
     // Check if no properties and money left and cannot pay rent anymore.
-    if (current == 0 && money < owe)
-        return 0;
+
+    if (activatecash) {
+        if (money == cashcondition)
+            return 0;
+    }
+    else {
+        if (current == 0 && money < owe)
+            return 0;
+    }
     return 1;
 }
 
@@ -602,6 +612,7 @@ int main() {
 
     // Configurable variables
     int nInitialMoney = 200;
+    int nActivateCondition = 0;
     int nCashCondition = 0;
     int nMultiplierElectric = 8;
     int nRentRailroad = 35;
@@ -622,7 +633,7 @@ int main() {
         scanf(" %c", &choice);
 
          if (choice == '1')
-            gameConfiguration(&nInitialMoney, &nRentRailroad, &nCashCondition, &nMultiplierElectric, &nMinPrimeAmt, &nMaxPrimeAmt, &nMinNonAmt, &nMaxNonAmt, &nRenovationCost);
+            gameConfiguration(&nInitialMoney, &nRentRailroad, &nActivateCondition, &nCashCondition, &nMultiplierElectric, &nMinPrimeAmt, &nMaxPrimeAmt, &nMinNonAmt, &nMaxNonAmt, &nRenovationCost);
 
         if (!(choice == '1' || choice == '2'))
             printf("\nInvalid input. Please try again.\n");
@@ -642,7 +653,7 @@ int main() {
     int nPlayer2Turns = 1;
     int nOwe = 0;
     
-    while(isValidToPlay(nOpponentAmt, nOpponent, nOwe)) {
+    while(isValidToPlay(nOpponentAmt, nOpponent, nOwe, nActivateCondition, nCashCondition)) {
         printf("===============[PLAYER %d]==================\n", nPlayerNo);
         printf("Current Balance: $%d\n", nCurrentAmt);
         printf("Current Location: ");
