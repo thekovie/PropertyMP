@@ -144,7 +144,7 @@ void getPropertyName(int location) {
 }
 
 /*
-    Description: This function returns the specific digit of the given number.
+    Description: This function returns the specific digit of the given 9-digit number.
     Precondition: The parameters given is an integer.
     @param current: The current player's owned properties.
     @param location: The location of the player.
