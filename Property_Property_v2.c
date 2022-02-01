@@ -520,10 +520,10 @@ int getRentAmount(int opponent, int current, int location, int roll, int multipl
 }
 
 /*
-    Description: Checks if the property landed on Property 1, 4, or 6.
+    Description: Checks if the property landed on Property 0, 4, or 6.
     Precondition: The parameters given are integers.
     @param location: Player's current location.
-    return: Returns true if the player landed on Property 1, 4, or 6.
+    return: Returns true if the player landed on Property 0, 4, or 6.
 */
 
 int isSpecial(int location) {
@@ -559,7 +559,7 @@ int isValidToPlay (int money, int current, int owe, int activatecash, int cashco
     // Check if no properties and money left and cannot pay rent anymore.
 
     if (activatecash) {
-        if (money == cashcondition)
+        if (money <= cashcondition)
             return 0;
     }
     else {
