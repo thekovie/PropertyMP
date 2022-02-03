@@ -12,15 +12,12 @@
 #include <time.h>
 #include <unistd.h>
 
-#define COLLECT_GO 200
-#define BUY_ELECTRIC 150
-#define BUY_RAILROAD 100
-
 int gameConfiguration(int * nCash, int * rentRailroad, int * activateCond,
                       int * cashCond, int * multiplierElectric, int * minPrimeAmt,
                       int * maxPrimeAmt, int * minAmt, int * maxAmt, int * costRenovation) {
         
         char choice;
+        int nDefault = 1;
         while (choice != '0') {
             system("cls || clear");
             printf("----------------------[ GAME CONFIGURATION ]--------------------------\n");
@@ -254,9 +251,9 @@ int isRenovated (int opponent, int current, int location) {
 int getBuyPrice (int location) {
     switch (location)
     {
-        case 2: return BUY_ELECTRIC; break;
-        case 7: return BUY_RAILROAD; break;
-        default: return location % 7 * 20; break;
+        case 2: return 150; break; // Electric Company
+        case 7: return 100; break; // Railroad Company
+        default: return location % 7 * 20; break; // Other properties
     }
 }
 
@@ -286,7 +283,6 @@ int hasMoney (int money, int price) {
 int promptBuy(int * current, int location, int money) {
     char decide;
     int nPrice = getBuyPrice(location);
-    sleep(1);
     getPropertyName(location);
     printf(" costs $%d.\n\n", nPrice);
     sleep(1);
@@ -307,31 +303,15 @@ int promptBuy(int * current, int location, int money) {
 
         sleep(1);
         if (decide == '1') {
-            if (location == 2) {
-                *current += pow(10, location-1);
-                printf("You have purchased ");
-                getPropertyName(location);
-            }
-                
-            else if (location == 7) {
-                *current += pow(10, location-1);
-                printf("You have purchased ");
-                getPropertyName(location);
-            }
-
-            else  {
-                *current += pow(10, location-1);
-                printf("You have purchased ");
-                getPropertyName(location);
-            }
+            *current += pow(10, location-1);
+            printf("You have purchased ");
+            getPropertyName(location);
             printf("!\n");
             return nPrice;
         } 
-
         if (decide == '2')
             return 0;
     }
-    sleep(1);
     printf("This property is for sale!\n");
     sleep(1);
     printf("You have insufficient funds to buy this property!\n\n");
@@ -729,7 +709,7 @@ int main() {
                     printf("\nPlayer %d have lost its turn!\n", nPlayerNo);
 
                 }
-                else {
+                else { // If the roll is a non-prime number
                     nTempAmt = getRandom(nMinNonAmt, nMaxNonAmt);
                     nCurrentAmt -= nTempAmt;
                     printf("Player %d lost $%d.\n", nPlayerNo, nTempAmt);
@@ -749,9 +729,8 @@ int main() {
                 promptResellProperty(&nCurrent, &nOpponent, nOwe, &nCurrentAmt);
                 payAmount(&nCurrentAmt, &nOpponentAmt, nOwe);
                 sleep(1);
-                if (nOwe == 0) {
+                if (nOwe == 0)
                     printf("Player %d has now paid $%d to the opponent.\n\n", nPlayerNo, nOwe);
-                }
             }
             else {
                 payAmount(&nCurrentAmt, &nOpponentAmt, nOwe);
@@ -800,6 +779,7 @@ int main() {
                     nPlayer1Turns = 2;
             }
         }
+
 
         if (nCurrentAmt >= 0) {
             printf("===========================================\n");
