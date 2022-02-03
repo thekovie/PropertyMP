@@ -13,7 +13,6 @@
 #include <time.h>
 #include <unistd.h>
 
-
 #if defined(WIN32) && !defined(UNIX)
     #include <conio.h>
 #endif
@@ -545,7 +544,8 @@ void payAmount (int * current, int * opponent, int payment) {
     *current -= payment;
     *opponent += payment;
 }
-printf("\n\n");
+
+/*
     Precondition: The parameters given are integers.
     @param money: The current player's money.
     @param current: The current player's owned properties.
