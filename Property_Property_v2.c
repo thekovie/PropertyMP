@@ -5,6 +5,8 @@
  * Version:           2.0
  * Acknowledgements:  I thank https://unix.stackexchange.com/questions/293940/how-can-i-make-press-any-key-to-continue 
  *                    for the help in implementing the pause code in any operating systems.
+ * 
+ *                    
  */
 
 #include <stdio.h>
@@ -12,6 +14,18 @@
 #include <math.h>
 #include <time.h>
 #include <unistd.h>
+#if defined(_WIN32)
+    #include <conio.h>
+#endif
+
+void displayKey() {
+    printf("\n\nPress any key to continue...\n");
+    #if defined(_WIN32) && !defined(UNIX)
+        getch();
+    #else
+        system("read -n 1 -s -r");
+    #endif
+}
 
 /*
     Description: This function is used to display and configure the game
@@ -855,7 +869,7 @@ int main() {
             }
             nPassedGo = 0;
 
-             system("read -n 1 -s -r -p \"\nPress any key to continue\n\n\"");
+             displayKey();
         }
         system("clear || cls");
         getGameSummary(nCurrent, nOpponent, nCurrentAmt, nOpponentAmt, nCashCondition, nPlayerNo);
