@@ -3,10 +3,10 @@
  * Programmed by:     John Kovie L. Niño S15B
  * Last modified:     February 4, 2022
  * Version:           2.0
- * Acknowledgements:  I thank https://unix.stackexchange.com/questions/293940/how-can-i-make-press-any-key-to-continue 
- *                    for the help in implementing the pause code in any operating systems.
- * 
- *                    
+ * Acknowledgements:  I thank https://unix.stackexchange.com/questions/293940/how-can-i-make-press-any-key-to-continue
+ *                    and https://stackoverflow.com/questions/5725296/difference-between-sh-and-bash
+ *                    for the help in implementing the pause code in some operating systems and other libraries for making
+ *                    this project possible.            
  */
 
 #include <stdio.h>
@@ -23,17 +23,17 @@ void displayKey() {
     #if defined(_WIN32) && !defined(UNIX)
         getch();
     #else
-        system("read -n 1 -s -r");
+        system("sh -c \"read -n 1 -sr\"");
     #endif
 }
 
 /*
-    Description: This function is used to display and configure the game
+    Description: This function is to configure the game's values.
     Pre-condition: The parameters given are integers.
     @param nCash: Starting cash of each player.
     @param rentRailroad: Rent cost of the railroad.
-    @param activateCond: To activate and the end-game condition.
-    @param cashCond: To activate the end-game condition.
+    @param activateCond: To activate the end-game condition.
+    @param cashCond: Modify the end-game condition.
     @param multiplierElectric: Rent multiplier of the electric company.
     @param minPrimeAmt: Minimum cash amount of prime numbers under Feelin' Lucky.
     @param maxPrimeAmt: Maximum cash amount of prime numbers under Feelin' Lucky.
@@ -122,7 +122,7 @@ void gameConfiguration(int * nCash, int * rentRailroad, int * activateCond,
 }
 
 /*
-    Description: This function generates a random number ranging from the minimum to maximum.
+    Description: This function generates and returns a random number ranging from the minimum to maximum.
     Precondition: The parameters given are integers.
     @param min: The minimum number.
     @param max: The maximum number.
@@ -213,7 +213,7 @@ void listAllProperties(int current) {
 }
 
 /*
-    Description:        This functions check if the number given is Prime or not
+    Description:        This function checks if the number given is Prime or not
     Precondition:       The parameter given is an integer
     @param  diceRoll =  the value needed to identify if Prime or not.
     @return 1        =  returns a TRUE boolean
@@ -355,6 +355,7 @@ int promptBuy(int * current, int location, int money) {
     Precondition: The parameters given are integers.
     @param current: The current player's owned properties.
     @param location: The location of the player landed on.
+    @param renPrice: The renovation cost of the property.
     return: returns the renovation price of the property or 0 if the player doesn't want to renovate it, also updates current if the player renovated the property.
 */
 
@@ -559,10 +560,13 @@ void payAmount (int * current, int * opponent, int payment) {
 }
 
 /*
+    Description: Checks if the player can still play the game.
     Precondition: The parameters given are integers.
     @param money: The current player's money.
     @param current: The current player's owned properties.
     @param owe: The amount of money the player owes.
+    @param cashcondition: The amount of money set by the player to end the game.
+    @param activatecondition: A boolean value that determines if the player has enabled the cash condition.
     return: Returns true if the player can still play the game.
 */
 
@@ -575,7 +579,7 @@ int isValidToPlay (int money, int current, int owe, int cashcondition, int activ
 }
 
 /*
-    Description: Prints the game menu.
+    Description: Prompts the game menu and returns the user's choice
     Precondition: None
     @return: Returns the user's choice.
 */
@@ -608,15 +612,16 @@ int printMenu () {
 }
 
 /*
-    Description: prints end game summary and announces winner.
+    Description: Prints end game summary and announces winner.
     Precondition: The parameters given are integers.
     @param player1: The first player's properties.
     @param player2: The second player's properties.
     @param money1: The first player's money.
     @param money2: The second player's money.
+    @param playerno: The current player's number.
 */
 
-void getGameSummary(int player1, int player2, int money1, int money2, int cashcondition, int playerno) {
+void getGameSummary(int player1, int player2, int money1, int money2, int playerno) {
     
     if (money1 == money2) {
             printf("\n====================================\n");
@@ -872,7 +877,7 @@ int main() {
         }
         system("clear || cls");
         if (nDecide != 0)
-            getGameSummary(nCurrent, nOpponent, nCurrentAmt, nOpponentAmt, nCashCondition, nPlayerNo);
+            getGameSummary(nCurrent, nOpponent, nCurrentAmt, nOpponentAmt, nPlayerNo);
 
     } while(nDecide == 1 || nDecide == 2);
     
