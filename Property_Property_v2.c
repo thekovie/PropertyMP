@@ -872,7 +872,7 @@ int main() {
              displayKey();
         }
         system("clear || cls");
-        if (nDecide == 3)
+        if (nDecide != 3)
             getGameSummary(nCurrent, nOpponent, nCurrentAmt, nOpponentAmt, nCashCondition, nPlayerNo);
 
     } while(nDecide == 1 || nDecide == 2);
