@@ -103,9 +103,12 @@ void gameConfiguration(int * nCash, int * rentRailroad, int * activateCond,
                     scanf("%d", costRenovation);
                     break;
                 case '9':
-                    printf("\nEnter the lowest cash-on-hand condition: ");
+                    printf("\nEnter the lowest cash-on-hand condition (Input 0 to disable): ");
                     scanf("%d", cashCond);
-                    *activateCond = 1;
+                    if (*cashCond == 0)
+                        *activateCond = 0;
+                    else
+                     *activateCond = 1;
                     break;
                 case '0':
                     break;
@@ -563,9 +566,11 @@ void payAmount (int * current, int * opponent, int payment) {
     return: Returns true if the player can still play the game.
 */
 
-int isValidToPlay (int money, int current, int owe, int cashcondition) {
-        if ((current == 0 && money < owe) || (money <= cashcondition))
-            return 0;
+int isValidToPlay (int money, int current, int owe, int cashcondition, int activatecondition) {
+    if (activatecondition == 1 && (money <= cashcondition))
+        return 0;
+    if (current == 0 && money < owe)
+        return 0;
     return 1;
 }
 
@@ -630,14 +635,7 @@ void getGameSummary(int player1, int player2, int money1, int money2, int cashco
             printf("Player 2 has won the game! Congratulations\n");
             printf("====================================\n");
     }
-    
 
-    // else if (player1 == 0)
-    //     printf("%s\n\n\n%s\n\n", "Player 2 wins!", "Congratulations!");
-    // else if (player2 == 0)
-    //     printf("%s\n\n\n%s\n\n", "Player 1 wins!", "Congratulations!");
-    // else
-    //     printf("%s\n\n\n%s\n\n", "It's a draw!", "Congratulations!");
     sleep(1);
     printf("=====================================\n");
     printf("            Game Summary\n");
@@ -654,6 +652,7 @@ void getGameSummary(int player1, int player2, int money1, int money2, int cashco
     sleep(1);
     printf("The game ends.\n\n");
     sleep(1);
+    displayKey();
 }
 
 int main() {
@@ -698,7 +697,7 @@ int main() {
         int nPlayer2Turns = 1;
         int nOwe = 0;
 
-        while(isValidToPlay(nOpponentAmt, nOpponent, nOwe, nCashCondition) && (nDecide == 2 || nDecide == 1)) {
+        while(isValidToPlay(nOpponentAmt, nOpponent, nOwe, nCashCondition, nActivateCondition) && (nDecide == 2 || nDecide == 1)) {
             system("clear || cls");
             printf("===============[PLAYER %d]==================\n", nPlayerNo);
             printf("Current Balance: $%d\n", nCurrentAmt);
@@ -872,7 +871,7 @@ int main() {
              displayKey();
         }
         system("clear || cls");
-        if (nDecide != 3)
+        if (nDecide != 0)
             getGameSummary(nCurrent, nOpponent, nCurrentAmt, nOpponentAmt, nCashCondition, nPlayerNo);
 
     } while(nDecide == 1 || nDecide == 2);
