@@ -1,21 +1,17 @@
-/*
-    Description:       This is a turn-based two-player board game.
-    Programmed by:     John Kovie L. Niño S15B
-    Last modified:     February 3, 2022
-    Version:           2.0
-    Acknowledgements:  Used the Standard Library (stdlib.h) and the Math Library (math.h) for making the program possible.
-                       https://stackoverflow.com/questions/1714245/difference-between-if-definedwin32-and-ifdefwin32
-*/
+/**
+ * Description:       This is a turn-based two-player board game.
+ * Programmed by:     John Kovie L. Niño S15B
+ * Last modified:     February 4, 2022
+ * Version:           2.0
+ * Acknowledgements:  I thank https://unix.stackexchange.com/questions/293940/how-can-i-make-press-any-key-to-continue 
+ *                    for the help in implementing the pause code in any operating systems.
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <time.h>
 #include <unistd.h>
-
-#if defined(WIN32) && !defined(UNIX)
-    #include <conio.h>
-#endif
 
 /*
     Description: This function is used to display and configure the game
@@ -452,7 +448,7 @@ void introMsg() {
         "=====================================",
         "|| Welcome to Property...Property! ||",
         "=====================================",
-        "This is a turn-based two-player board game.\nPlayers compete to acquire wealth by buying or renting properties.\nThe game ends when a player goes bankrupt, i.e. he does not have enough money to pay rent.");
+        "This is a turn-based two-player board game.\nPlayers compete to acquire wealth by buying or renting properties.\nThe game ends when a player goes bankrupt, i.e. he does not have enough money to pay rent (unless the player modifies its condition).");
         
         sleep(2);
 }
@@ -553,17 +549,9 @@ void payAmount (int * current, int * opponent, int payment) {
     return: Returns true if the player can still play the game.
 */
 
-int isValidToPlay (int money, int current, int owe, int activatecash, int cashcondition) {
-    // Check if no properties and money left and cannot pay rent anymore.
-
-    if (activatecash) {
-        if (money <= cashcondition)
+int isValidToPlay (int money, int current, int owe, int cashcondition) {
+        if (current == 0 && money < owe || (money <= cashcondition))
             return 0;
-    }
-    else {
-        if (current == 0 && money < owe)
-            return 0;
-    }
     return 1;
 }
 
@@ -609,25 +597,47 @@ int printMenu () {
     @param money2: The second player's money.
 */
 
-void getGameSummary(int player1, int player2, int money1, int money2) {
+void getGameSummary(int player1, int player2, int money1, int money2, int cashcondition, int playerno) {
     
-    if (player1 == 0)
-        printf("%s\n\n\n%s\n\n", "Player 2 wins!", "Congratulations!");
-    else if (player2 == 0)
-        printf("%s\n\n\n%s\n\n", "Player 1 wins!", "Congratulations!");
-    else
-        printf("%s\n\n\n%s\n\n", "It's a draw!", "Congratulations!");
+    if (money1 == money2) {
+            printf("\n====================================\n");
+            printf("It's a draw! Congratulations!\n");
+            printf("====================================\n");
+    }
+    else if (playerno == 1) {
+            printf("\n====================================\n");
+            printf("Player 2 has gone bankrupt!\n");
+            printf("Player 1 has won the game! Congratulations\n");
+            printf("====================================\n");
+    }
+    else {
+            printf("\n====================================\n");
+            printf("Player 1 has gone bankrupt!\n");
+            printf("Player 2 has won the game! Congratulations\n");
+            printf("====================================\n");
+    }
     
+
+    // else if (player1 == 0)
+    //     printf("%s\n\n\n%s\n\n", "Player 2 wins!", "Congratulations!");
+    // else if (player2 == 0)
+    //     printf("%s\n\n\n%s\n\n", "Player 1 wins!", "Congratulations!");
+    // else
+    //     printf("%s\n\n\n%s\n\n", "It's a draw!", "Congratulations!");
+    sleep(1);
     printf("=====================================\n");
     printf("            Game Summary\n");
     printf("=====================================\n\n");
+    sleep(1);
     printf("=============[PLAYER %d]==============\n", 1);
     listAllProperties(player1);
     printf("\nRemaining Balance: $%d\n", money1);
-    printf("\n=============[PLAYER %d]=============\n", 2);
+    sleep(1);
+    printf("\n=============[PLAYER %d]==============\n", 2);
     listAllProperties(player2);
     printf("\nRemaining Balance: $%d\n", money2);
     printf("\n=====================================\n\n");
+    sleep(1);
     printf("The game ends.\n\n");
     sleep(1);
 }
@@ -674,7 +684,8 @@ int main() {
         int nPlayer2Turns = 1;
         int nOwe = 0;
 
-        while(isValidToPlay(nOpponentAmt, nOpponent, nOwe, nActivateCondition, nCashCondition) && (nDecide == 2 || nDecide == 1)) {
+        while(isValidToPlay(nOpponentAmt, nOpponent, nOwe, nCashCondition) && (nDecide == 2 || nDecide == 1)) {
+            system("clear || cls");
             printf("===============[PLAYER %d]==================\n", nPlayerNo);
             printf("Current Balance: $%d\n", nCurrentAmt);
             printf("Current Location: ");
@@ -827,6 +838,7 @@ int main() {
 
 
             if (nCurrentAmt >= 0) {
+                sleep(1);
                 printf("===========================================\n");
                 printf("Player %d's NEW Balance: $%d\n", nPlayerNo, nCurrentAmt);
                 printf("===========================================\n");
@@ -843,16 +855,11 @@ int main() {
             }
             nPassedGo = 0;
 
-                #if defined(WIN32) && !defined(UNIX)
-                    printf("\n\nPress ENTER to continue.\n");
-                    getch();
-                    system("clear || cls");
-                #endif
-
-                printf("\n\n");
+             system("read -n 1 -s -r -p \"\nPress any key to continue\n\n\"");
         }
         system("clear || cls");
-        getGameSummary(nCurrent, nOpponent, nCurrentAmt, nOpponentAmt);
+        getGameSummary(nCurrent, nOpponent, nCurrentAmt, nOpponentAmt, nCashCondition, nPlayerNo);
+
     } while(nDecide == 1 || nDecide == 2);
     
     return 0;
