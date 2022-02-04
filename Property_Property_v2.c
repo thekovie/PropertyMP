@@ -22,7 +22,7 @@ void displayKey() {
     printf("\n\nPress any key to continue...\n");
     #if defined(_WIN32) && !defined(UNIX)
         getch();
-    #else
+    #if !defined(_WIN32)
         system("read -n 1 -s -r");
     #endif
 }
