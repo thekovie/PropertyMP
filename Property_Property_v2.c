@@ -22,7 +22,7 @@ void displayKey() {
     printf("\n\nPress any key to continue...\n");
     #if defined(_WIN32) && !defined(UNIX)
         getch();
-    #elif !defined(_WIN32)
+    #else
         system("read -n 1 -s -r");
     #endif
 }
@@ -564,7 +564,7 @@ void payAmount (int * current, int * opponent, int payment) {
 */
 
 int isValidToPlay (int money, int current, int owe, int cashcondition) {
-        if (current == 0 && money < owe || (money <= cashcondition))
+        if ((current == 0 && money < owe) || (money <= cashcondition))
             return 0;
     return 1;
 }
