@@ -197,7 +197,7 @@ void listAllProperties(int current) {
     int i;
 
     if (current == 0)
-        printf("You don't own any properties!\n");
+        printf("No properties owned.\n");
 
     if (current > 0) {
         for (i = 1; i < 10; i++) {
@@ -243,8 +243,8 @@ int isPrime (int diceRoll) {
 */
 
 int isOwned (int opponent, int current, int location) {
-    int nLoc1 = getDigit(current, location); // Current player
-    int nLoc2 = getDigit(opponent, location); // Opponent player
+    int nLoc1 = getDigit(current, location);
+    int nLoc2 = getDigit(opponent, location);
 
     if (nLoc2 == 1 || nLoc2 == 2) // Opponent owns it
         return 1;
