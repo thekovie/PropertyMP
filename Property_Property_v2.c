@@ -667,7 +667,7 @@ int main() {
     do {
         // Player 1 and 2 Current Stats
         int nLoc1 = 0, nLoc2 = 0;
-        int nPlayer1 = 1010000, nPlayer2 = 20000112;
+        int nPlayer1 = 0, nPlayer2 = 0;
 
         // Configurable variables
         int nInitialMoney = 200;
@@ -743,7 +743,7 @@ int main() {
 
             // Check if user has passed thru GO or Location 0
             if (nPassedGo == 1 && nLocation != 0) {
-                // nCurrentAmt += 200;
+                nCurrentAmt += 200;
                 printf("Player %d passed through GO! Collect $200.\n", nPlayerNo);
                 sleep(1);
                 printf("===========================================\n");
@@ -754,7 +754,7 @@ int main() {
             // Check if location lands on the special locations
             if (isSpecial(nLocation)) {
                 if (nLocation == 0) {  // nLocation lands on 0.
-                    // nCurrentAmt += 200;
+                    nCurrentAmt += 200;
                     printf("Player %d collects $200!\n", nPlayerNo);
                 }
                 else if (nLocation == 4) // Lands on jail
@@ -771,7 +771,7 @@ int main() {
 
                     if (isPrime(nRoll)) { // If the roll is a prime number
                         nTempAmt = getRandom(nMinPrimeAmt, nMaxPrimeAmt);
-                        // nCurrentAmt += nTempAmt;
+                        nCurrentAmt += nTempAmt;
                         printf("Player %d has earned $%d!\n", nPlayerNo, nTempAmt);
                     } 
                     
