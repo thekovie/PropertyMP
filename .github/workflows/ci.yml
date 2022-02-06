@@ -76,6 +76,6 @@ jobs:
       if: ${{ steps.checktag.outputs.is_release == 'yes' }}
       with:
         files: |
-          ./build/PropertyMP${{ matrix.os == 'windows-latest' && '.exe' || ''}}
+          ./build/PropertyMP-${{ matrix.os }}${{ matrix.os == 'windows-latest' && '.exe' || ''}}
         name: ${{ steps.checktag.outputs.version }}
         prerelease: true
