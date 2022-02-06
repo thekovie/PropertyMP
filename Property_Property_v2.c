@@ -1,12 +1,12 @@
 /**
  * Description:       This is a turn-based two-player board game.
  * Programmed by:     John Kovie L. Niño S15B
- * Last modified:     February 4, 2022
+ * Last modified:     February 5, 2022
  * Version:           2.0
- * Acknowledgements:  I thank https://unix.stackexchange.com/questions/293940/how-can-i-make-press-any-key-to-continue
- *                    and https://stackoverflow.com/questions/5725296/difference-between-sh-and-bash
- *                    for the help in implementing the pause code in some operating systems and other libraries for making
- *                    this project possible.            
+ * Acknowledgements:  - I thank https://unix.stackexchange.com/questions/293940/how-can-i-make-press-any-key-to-continue
+ *                      and https://stackoverflow.com/questions/5725296/difference-between-sh-and-bash
+ *                      for the help in implementing the pause code in some operating systems and other libraries for making
+ *                      this project possible.         
  */
 
 #include <stdio.h>
@@ -42,9 +42,16 @@ void displayKey() {
     @param costRenovation: Cost of the renovation of the property.
     @return: Multiple return values that will be used in the main function.
 */
-void gameConfiguration(int * nCash, int * rentRailroad, int * activateCond,
-                      int * cashCond, int * multiplierElectric, int * minPrimeAmt,
-                      int * maxPrimeAmt, int * minAmt, int * maxAmt, int * costRenovation) {
+void gameConfiguration (int * nCash, 
+                        int * rentRailroad, 
+                        int * activateCond,
+                        int * cashCond, 
+                        int * multiplierElectric, 
+                        int * minPrimeAmt,
+                        int * maxPrimeAmt, 
+                        int * minAmt, 
+                        int * maxAmt, 
+                        int * costRenovation) {
         
         char choice;
         while (choice != '0') {
@@ -129,8 +136,10 @@ void gameConfiguration(int * nCash, int * rentRailroad, int * activateCond,
     @return: random number ranging from its given minimum to maximum value
 */
 
-int getRandom(int min, int max) {
-       return min + rand() % (max + 1 - min);
+int getRandom (int min, 
+               int max) {
+       return min + rand() % (max + 1 - min); 
+       // Generate a random number between min and max
 }
 
 /*
@@ -142,23 +151,24 @@ int getRandom(int min, int max) {
     @return returns the location of player
 */
 
-int getLocation(int nLocation, int nDiceRoll, int * passedGo){
-    if (nLocation + nDiceRoll > 9) {
-        nLocation -= 10;
-        *passedGo = 1;
+int getLocation (int nLocation, 
+                 int nDiceRoll, 
+                 int * passedGo) {
+    if (nLocation + nDiceRoll > 9) { // If the player lands on a property that is not on the board
+        nLocation -= 10; // The player will be moved to the start of the board
+        *passedGo = 1; // Indicates that the player passed Go or Location 0.
     }
-    return nLocation += nDiceRoll;
+    return nLocation += nDiceRoll; // The player's new location
 }
 
 /*
     Description: This function prints the property's name that the player has landed on.
     Precondition: The parameter given are integers.
     @param location: The location of the player.
-    @param renovated: The variable that determines if the property is renovated.
     @return returns the name of the property.
 */
 
-void getPropertyName(int location) {
+void getPropertyName (int location) {
     switch (location) {
         case 0: printf("GO! COLLECT $200"); break;
         case 1: printf("TREEHOUSE"); break;
@@ -181,7 +191,8 @@ void getPropertyName(int location) {
     @return returns the specific digit of the given number.
 */
 
-int getDigit(int current, int location) {
+int getDigit (int current, 
+              int location) {
     int nDivisor = pow(10, location - 1);
     int nSplit = current / nDivisor;
     int nFinal = nSplit % 10;
@@ -243,11 +254,13 @@ int isPrime (int diceRoll) {
     @return returns a boolean value.
 */
 
-int isOwned (int opponent, int current, int location) {
+int isOwned (int opponent, 
+             int current, 
+             int location) {
     int nLoc1 = getDigit(current, location);
     int nLoc2 = getDigit(opponent, location);
 
-    if (nLoc2 == 1 || nLoc2 == 2) // Current user owns it
+    if (nLoc2 == 1 || nLoc2 == 2) // Current given user owns it
         return 1;
     if (nLoc1 == 1 || nLoc1 == 2) // Another player owns it
         return 0;
@@ -263,11 +276,13 @@ int isOwned (int opponent, int current, int location) {
     @return returns a boolean value.
 */
 
-int isRenovated (int opponent, int current, int location) {
+int isRenovated (int opponent, 
+                 int current, 
+                 int location) {
     int nLoc1 = getDigit(current, location); // Current player
     int nLoc2 = getDigit(opponent, location); // Opponent player
 
-    if (nLoc2 == 2) // Current user renovated it
+    if (nLoc2 == 2) // Current given user renovated it
         return 1;
     if (nLoc1 == 2) // Another player renovated it
         return 0;
@@ -298,7 +313,8 @@ int getBuyPrice (int location) {
     @return returns a boolean value.
 */
 
-int hasMoney (int money, int price) {
+int hasMoney (int money, 
+              int price) {
     if (money >= price)
         return 1;
     return 0;
@@ -313,14 +329,15 @@ int hasMoney (int money, int price) {
     return: returns the price of the property or 0 if the player doesn't want to buy it, also updates current if the player bought the property.
 */
 
-int promptBuy(int * current, int location, int money) {
+int promptBuy(int * current, 
+              int   location, 
+              int   money) {
     char decide;
     int nPrice = getBuyPrice(location);
     getPropertyName(location);
     printf(" costs $%d.\n\n", nPrice);
     sleep(1);
-    if (hasMoney(money, nPrice))
-    {
+    if (hasMoney(money, nPrice)) {
         do {
             printf("%s\n%s\n\n%s\n%s\n%s",
             "This property is for sale!",
@@ -342,6 +359,7 @@ int promptBuy(int * current, int location, int money) {
             printf("!\n");
             return nPrice;
         } 
+
         if (decide == '2')
             return 0;
     }
@@ -360,7 +378,9 @@ int promptBuy(int * current, int location, int money) {
     return: returns the renovation price of the property or 0 if the player doesn't want to renovate it, also updates current if the player renovated the property.
 */
 
-int promptRenovate(int * current, int location, int renPrice) {
+int promptRenovate (int * current,
+                    int   location, 
+                    int   renPrice) {
     char decide;
     do {
         sleep(1);
@@ -396,7 +416,10 @@ int promptRenovate(int * current, int location, int renPrice) {
     return: Updates current properties and money of the player.
 */
 
-void promptResellProperty(int * current, int * opponent, int owe, int * money) {
+void promptResellProperty (int * current, 
+                           int * opponent, 
+                           int   owe, 
+                           int * money) {
     int decide;
     while (*money < owe && *current != 0) {
         do {
@@ -452,7 +475,7 @@ void promptResellProperty(int * current, int * opponent, int owe, int * money) {
 /*
     Description: Outputs introductory message as program runs
 */
-void introMsg() {
+void introMsg () {
     printf("%s\n%s\n%s\n\n%s\n\n",
         "=====================================",
         "|| Welcome to Property...Property! ||",
@@ -475,9 +498,13 @@ void introMsg() {
     return: transfers the data of the current player to the opponent and vice versa.
 */
 
-void playerSwitch(int * current, int * opponent, int * playerno, 
-                  int * player1, int * player2, int * amtcurrent, 
-                  int * amtopponent) {
+void playerSwitch (int * current, 
+                   int * opponent, 
+                   int * playerno, 
+                   int * player1, 
+                   int * player2, 
+                   int * amtcurrent, 
+                   int * amtopponent) {
     int temp; // temporary variable to store the current player's money
 
     if (*playerno == 1) {
@@ -508,7 +535,13 @@ void playerSwitch(int * current, int * opponent, int * playerno,
     return: The rent amount of the property.
 */
 
-int getRentAmount(int opponent, int current, int location, int roll, int multiplier, int railroad) {
+int getRentAmount (int opponent, 
+                   int current, 
+                   int location, 
+                   int roll, 
+                   int multiplier, 
+                   int railroad) {
+
     int nTotalAmt = getBuyPrice(location) * 0.2; // Original rent amount
 
     if (!isRenovated(opponent, current, location)) { // If not renovated property
@@ -531,7 +564,7 @@ int getRentAmount(int opponent, int current, int location, int roll, int multipl
     return: Returns true if the player landed on Property 0, 4, or 6.
 */
 
-int isSpecial(int location) {
+int isSpecial (int location) {
     if (location == 0 || location == 4 || location == 6)
         return 1;
     return 0;
@@ -546,7 +579,9 @@ int isSpecial(int location) {
     return: Deducts the amount from the current player's money and adds it to the opponent's money.
 */
 
-void payAmount (int * current, int * opponent, int payment) {
+void payAmount (int * current, 
+                int * opponent, 
+                int   payment) {
     // Pay amount to opponent
     *current -= payment;
     *opponent += payment;
@@ -563,7 +598,11 @@ void payAmount (int * current, int * opponent, int payment) {
     return: Returns true if the player can still play the game.
 */
 
-int isValidToPlay (int money, int current, int owe, int cashcondition, int activatecondition) {
+int isValidToPlay (int money, 
+                   int current, 
+                   int owe, 
+                   int cashcondition, 
+                   int activatecondition) {
     // If the player has enabled the cash condition and the player has enough money to end the game
     if (activatecondition == 1 && (money <= cashcondition)) 
         return 0;
@@ -615,7 +654,11 @@ int printMenu () {
     @param playerno: The current player's number.
 */
 
-void getGameSummary(int player1, int player2, int money1, int money2, int playerno) {
+void getGameSummary (int player1, 
+                     int player2, 
+                     int money1, 
+                     int money2, 
+                     int playerno) {
 
     // If both has the same amount of money, it is a draw
     if (money1 == money2) {
@@ -685,7 +728,16 @@ int main() {
         nDecide = printMenu();
 
         if (nDecide == 1)
-            gameConfiguration(&nInitialMoney, &nRentRailroad, &nActivateCondition, &nCashCondition, &nMultiplierElectric, &nMinPrimeAmt, &nMaxPrimeAmt, &nMinNonAmt, &nMaxNonAmt, &nRenovationCost);
+            gameConfiguration(&nInitialMoney, 
+                              &nRentRailroad, 
+                              &nActivateCondition, 
+                              &nCashCondition, 
+                              &nMultiplierElectric, 
+                              &nMinPrimeAmt, 
+                              &nMaxPrimeAmt, 
+                              &nMinNonAmt, 
+                              &nMaxNonAmt, 
+                              &nRenovationCost);
         
         // Initialize the game
         int nRoll, nLocation, nTempAmt;
@@ -699,7 +751,8 @@ int main() {
         int nPlayer2Turns = 1;
         int nOwe = 0;
 
-        while(isValidToPlay(nOpponentAmt, nOpponent, nOwe, nCashCondition, nActivateCondition) && (nDecide == 2 || nDecide == 1)) {
+        while(isValidToPlay(nOpponentAmt, nOpponent, nOwe, nCashCondition, nActivateCondition) &&
+             (nDecide == 2 || nDecide == 1)) {
             system("clear || cls");
 
             /* PLAYER STATS */
@@ -808,7 +861,6 @@ int main() {
                 }
                 else {
                     payAmount(&nCurrentAmt, &nOpponentAmt, nOwe);
-                    sleep(1);
                     printf("Player %d has now paid $%d to the opponent.\n\n", nPlayerNo, nOwe);
                 }
             }
