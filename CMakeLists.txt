@@ -5,3 +5,6 @@ set(CMAKE_C_STANDARD 11)
 
 add_executable(PropertyMP
         Property_Property_v2.c)
+        
+target_link_libraries(PropertyMP m)
+        
