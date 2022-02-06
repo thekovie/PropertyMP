@@ -13,12 +13,28 @@
 #include <stdlib.h>
 #include <math.h>
 #include <time.h>
-#include <unistd.h>
 #if defined(_WIN32)
     #include <conio.h>
+    #include <windows.h>
+#else
+    #include <unistd.h>
 #endif
 
-void displayKey() {
+/*
+    Description: This function delays the program execution for a certain amount of time.
+*/
+void pause () {
+    #if defined(_WIN32)
+        Sleep(1000);
+    #else
+        sleep(1);
+    #endif
+}
+
+/*
+    Description: This function waits for the user to press any key to continue.
+*/
+void displayKey () {
     printf("\n\nPress any key to continue...\n");
     #if defined(_WIN32) && !defined(UNIX)
         getch();
@@ -75,7 +91,7 @@ void gameConfiguration (int * nCash,
             printf(">> ");
             scanf(" %c", &choice);
 
-            sleep(1);
+            pause();
             switch (choice) {
                 case '1':
                     printf("\nEnter the new starting cash: ");
@@ -123,7 +139,7 @@ void gameConfiguration (int * nCash,
                     printf("\nERROR: Invalid choice. Try Again!\n");
                     break;
             }
-            sleep(1);
+            pause();
         }
         system("cls || clear");
 }
@@ -336,7 +352,7 @@ int promptBuy(int * current,
     int nPrice = getBuyPrice(location);
     getPropertyName(location);
     printf(" costs $%d.\n\n", nPrice);
-    sleep(1);
+    pause();
     if (hasMoney(money, nPrice)) {
         do {
             printf("%s\n%s\n\n%s\n%s\n%s",
@@ -351,7 +367,7 @@ int promptBuy(int * current,
                 printf("\nERROR: Invalid input. Please try again.\n\n");
         } while(!(decide == '1' || decide == '2'));
 
-        sleep(1);
+        pause();
         if (decide == '1') {
             *current += pow(10, location-1);
             printf("You have purchased ");
@@ -364,7 +380,7 @@ int promptBuy(int * current,
             return 0;
     }
     printf("This property is for sale!\n");
-    sleep(1);
+    pause();
     printf("You have insufficient funds to buy this property!\n\n");
     return 0;
 }
@@ -383,9 +399,9 @@ int promptRenovate (int * current,
                     int   renPrice) {
     char decide;
     do {
-        sleep(1);
+        pause();
         printf("Your house property is not yet renovated.\nIf you're interested, it costs $%d!\n\n", renPrice);
-        sleep(1);
+        pause();
         printf("%s\n\n%s\n%s\n%s",
         "Please select the following:",
         "[1]\tRenovate Property",
@@ -423,17 +439,17 @@ void promptResellProperty (int * current,
     int decide;
     while (*money < owe && *current != 0) {
         do {
-            sleep(1);
+            pause();
             printf("%s\n", "Please resell one of your properties:");
             listAllProperties(*current);
             printf("\n>> ");
             scanf("%d", &decide);
-            sleep(1);
+            pause();
             if (!isOwned(*current, *opponent, decide))
                 printf("\nERROR: You don't own this property!\n\n");
         } while(!isOwned(*current, *opponent, decide));
         
-        sleep(1);
+        pause();
         printf("You have sold the ");
         getPropertyName(decide);
 
@@ -447,25 +463,25 @@ void promptResellProperty (int * current,
 
         printf(" for $%d!\n", getBuyPrice(decide) / 2);
         
-        sleep(1);
+        pause();
         printf("You no longer own this property.\n\n");
 
         if (*money < owe) {
-            sleep(1);
+            pause();
             printf("You still need $%d to pay the rent! You still have to sell more properties!\n\n", owe - *money);
         }
     }
-    sleep(1);
+    pause();
     if (*current == 0 && *money < owe){
         printf("You have no properties to sell!\n");
-        sleep(1);
+        pause();
         printf("You have insufficient funds to pay $%d to the opponent! You are not able to pay rent!\n", owe);
     }
     
-    sleep(1);
+    pause();
     if (*money >= owe) {
         printf("\nYou now have enough funds to pay the rent!\n");
-        sleep(1);
+        pause();
         printf("\n====================================\n");
         printf("NEW Current Balance: $%d\n", *money);
         printf("====================================\n\n");
@@ -681,22 +697,22 @@ void getGameSummary (int player1,
             printf("====================================\n");
     }
     // Show game summary
-    sleep(1);
+    pause();
     printf("=====================================\n");
     printf("            Game Summary\n");
     printf("=====================================\n\n");
-    sleep(1);
+    pause();
     printf("=============[PLAYER %d]==============\n", 1);
     listAllProperties(player1);
     printf("\nRemaining Balance: $%d\n", money1);
-    sleep(1);
+    pause();
     printf("\n=============[PLAYER %d]==============\n", 2);
     listAllProperties(player2);
     printf("\nRemaining Balance: $%d\n", money2);
     printf("\n=====================================\n\n");
-    sleep(1);
+    pause();
     printf("The game ends.\n\n");
-    sleep(1);
+    pause();
     displayKey();
 }
 
@@ -764,16 +780,16 @@ int main() {
             else
                 getPropertyName(nLoc2);
             printf("\n===========================================\n");
-            sleep(1);
+            pause();
             printf("Properties Owned:\n");
             listAllProperties(nCurrent);
             printf("===========================================\n\n");
-            sleep(1);
+            pause();
 
             /* ROLL DICE */
             printf("Rolling Dice...\n");
             nRoll = getRandom(1,6);
-            sleep(1);
+            pause();
             printf("Player %d has rolled [ %d ].\n", nPlayerNo, nRoll);
             
 
@@ -788,17 +804,17 @@ int main() {
             }
 
             /* Output where the Player has landed */
-            sleep(1);
+            pause();
             printf("Player %d has landed on ", nPlayerNo);
             getPropertyName(nLocation);
             printf(".\n");
-            sleep(1);
+            pause();
 
             // Check if user has passed thru GO or Location 0
             if (nPassedGo == 1 && nLocation != 0) {
                 nCurrentAmt += 200;
                 printf("Player %d passed through GO! Collect $200.\n", nPlayerNo);
-                sleep(1);
+                pause();
                 printf("===========================================\n");
                 printf("Player %d's NEW Balance: $%d\n", nPlayerNo, nCurrentAmt);
                 printf("===========================================\n");
@@ -818,9 +834,9 @@ int main() {
                 {
                     printf("Rolling dice to determine your luck...\n");
                     nRoll = getRandom(1,6);
-                    sleep(1);
+                    pause();
                     printf("Player %d has has rolled [ %d ].\n", nPlayerNo, nRoll);
-                    sleep(1);
+                    pause();
 
                     if (isPrime(nRoll)) { // If the roll is a prime number
                         nTempAmt = getRandom(nMinPrimeAmt, nMaxPrimeAmt);
@@ -845,19 +861,19 @@ int main() {
             // If opponent owns it
             else if (isOwned(nOpponent, nCurrent, nLocation)) { 
                 nOwe = getRentAmount(nOpponent, nCurrent, nLocation, nRoll, nMultiplierElectric, nRentRailroad);
-                sleep(1);
+                pause();
                 printf("Player %d owes $%d to the opponent.\n", nPlayerNo, nOwe);
-                sleep(1);
+                pause();
 
                 if (nCurrentAmt < nOwe) {
                     printf("Player %d has insufficent funds!\n", nPlayerNo);
-                    sleep(1);
+                    pause();
                     printf("You're $%d short!\n\n", nOwe - nCurrentAmt);
                     promptResellProperty(&nCurrent, &nOpponent, nOwe, &nCurrentAmt);
                     if (nOwe < nCurrentAmt)
                         printf("Player %d has now paid $%d to the opponent.\n\n", nPlayerNo, nOwe);
                     payAmount(&nCurrentAmt, &nOpponentAmt, nOwe);
-                    sleep(1);
+                    pause();
                 }
                 else {
                     payAmount(&nCurrentAmt, &nOpponentAmt, nOwe);
@@ -915,7 +931,7 @@ int main() {
 
             // Outputs the current player's balance if amount is above or equal to 0
             if (nCurrentAmt >= 0) {
-                sleep(1);
+                pause();
                 printf("\n===========================================\n");
                 printf("Player %d's NEW Balance: $%d\n", nPlayerNo, nCurrentAmt);
                 printf("===========================================\n");
