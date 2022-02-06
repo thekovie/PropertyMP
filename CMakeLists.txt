@@ -4,4 +4,4 @@ project(PropertyMP C)
 set(CMAKE_C_STANDARD 11)
 
 add_executable(PropertyMP
-        Property_Property.c)
+        Property_Property_v2.c)
