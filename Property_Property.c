@@ -1,7 +1,7 @@
 /**
  * Description:       This is a turn-based two-player board game.
  * Programmed by:     John Kovie L. Niño S15B
- * Last modified:     February 5, 2022
+ * Last modified:     February 6, 2022
  * Version:           2.0
  * Acknowledgements:  - I thank https://unix.stackexchange.com/questions/293940/how-can-i-make-press-any-key-to-continue
  *                      and https://stackoverflow.com/questions/5725296/difference-between-sh-and-bash
@@ -255,7 +255,7 @@ int isPrime (int diceRoll) {
         if (diceRoll % i == 0)
             nDivisors++;
     }
-    if (nDivisors == 2 || diceRoll == 2)
+    if (nDivisors == 2 || diceRoll == 2) // It is prime if there are 2 divisors or the dice roll is 2
         return 1;
 
     return 0; 
