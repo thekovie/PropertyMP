@@ -468,19 +468,19 @@ void promptResellProperty (int * current,
 
         if (*money < owe) {
             sleepDelay();
-            printf("You still need $%d to pay the rent! You still have to sell more properties!\n\n", owe - *money);
+            printf("You still need $%d to pay what you owe! You still have to sell more properties!\n\n", owe - *money);
         }
     }
     sleepDelay();
     if (*current == 0 && *money < owe){
         printf("You have no properties to sell!\n");
         sleepDelay();
-        printf("You have insufficient funds to pay $%d to the opponent! You are not able to pay rent!\n", owe);
+        printf("You have insufficient funds to pay $%d! You are not able to pay what you owe!\n", owe);
     }
     
     sleepDelay();
     if (*money >= owe) {
-        printf("\nYou now have enough funds to pay the rent!\n");
+        printf("\nYou now have enough funds to pay the amount!\n");
         sleepDelay();
         printf("\n====================================\n");
         printf("NEW Current Balance: $%d\n", *money);
@@ -756,7 +756,7 @@ int main() {
                               &nRenovationCost);
         
         // Initialize the game
-        int nRoll, nLocation, nTempAmt;
+        int nRoll, nLocation;
         int nCurrent = nPlayer1;
         int nOpponent = nPlayer2;
         int nPlayerNo = 1;
@@ -839,22 +839,34 @@ int main() {
                     sleepDelay();
 
                     if (isPrime(nRoll)) { // If the roll is a prime number
-                        nTempAmt = getRandom(nMinPrimeAmt, nMaxPrimeAmt);
-                        nCurrentAmt += nTempAmt;
-                        printf("Player %d has earned $%d!\n", nPlayerNo, nTempAmt);
+                        nOwe = getRandom(nMinPrimeAmt, nMaxPrimeAmt);
+                        nCurrentAmt += nOwe;
+                        printf("Player %d has earned $%d!\n", nPlayerNo, nOwe);
                     } 
                     
                     else if (nRoll == 1) { // If Roll lands on 1
                         nLocation = 4;
-                        printf("Player %d has landed on ", nPlayerNo);
+                        printf("Player %d has been transfered to ", nPlayerNo);
                         getPropertyName(nLocation);
                         printf("\nPlayer %d have lost its turn!\n", nPlayerNo);
 
                     }
                     else { // If the roll is a non-prime number
-                        nTempAmt = getRandom(nMinNonAmt, nMaxNonAmt);
-                        nCurrentAmt -= nTempAmt;
-                        printf("Player %d lost $%d.\n", nPlayerNo, nTempAmt);
+                        nOwe = getRandom(nMinNonAmt, nMaxNonAmt);
+
+                        if (nCurrentAmt < nOwe) {
+                            printf("Player %d has insufficent funds!\n", nPlayerNo);
+                            sleepDelay();
+                            printf("You're $%d short!\n\n", nOwe - nCurrentAmt);
+                            promptResellProperty(&nCurrent, &nOpponent, nOwe, &nCurrentAmt);
+                            if (nOwe <= nCurrentAmt) // if player has enough money to pay
+                                printf("Player %d has now paid $%d to the bank.\n\n", nPlayerNo, nOwe);
+                            nCurrentAmt -= nOwe;
+                            sleepDelay();
+                        } else {
+                            nCurrentAmt -= nOwe;
+                            printf("Player %d has paid $%d to the bank.\n\n", nPlayerNo, nOwe);
+                        }
                     }
                 }
             }
