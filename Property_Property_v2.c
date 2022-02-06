@@ -498,7 +498,7 @@ void introMsg () {
         "=====================================",
         "This is a turn-based two-player board game.\nPlayers compete to acquire wealth by buying or renting properties.\nThe game ends when a player goes bankrupt, i.e. he does not have enough money to pay rent (unless the player modifies its condition).");
         
-        sleep(2);
+    sleepDelay();
 }
 
 /*
