@@ -2,9 +2,12 @@ name: CMake
 
 on:
   push:
+    tags:
+      - 'v*'
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
@@ -23,6 +26,29 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    
+    - name: Figure out if we're running for a tag
+      id: checktag
+      run: |
+        If($Env:GITHUB_REF -match "v([0-9]*)\.([0-9]*)\.([0-9]*)") {
+            $IsRelease = "yes";
+            $Version = $Matches[0];
+            $VersionMinor = $Matches[1];
+            $VersionMajor = $Matches[2];
+            $VersionPatch = $Matches[3];
+        } Else {
+            $IsRelease = "no";
+            $Version = $Env:GITHUB_SHA;
+            $VersionMinor = 0;
+            $VersionMajor = 0;
+            $VersionPatch = 0;
+        }
+        Echo ("::set-output name=is_release::" + $IsRelease);
+        Echo ("::set-output name=version::" + $Version);
+        Echo ("::set-output name=version_major::" + $VersionMajor);
+        Echo ("::set-output name=version_minor::" + $VersionMinor);
+        Echo ("::set-output name=version_patch::" + $VersionPatch);
+
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
@@ -42,5 +68,13 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: ${{ matrix.os }}
-        path: build/
-      
+        path: build/PropertyMP${{ matrix.os == 'windows-latest' && '.exe' || ''}}
+    
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      if: ${{ steps.checktag.outputs.is_release == 'yes' }}
+      with:
+        files: |
+          ./build/PropertyMP${{ matrix.os == 'windows-latest' && '.exe' || ''}}
+        name: ${{ steps.checktag.outputs.version }}
+        prerelease: true
