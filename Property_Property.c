@@ -870,7 +870,7 @@ int main() {
                     sleepDelay();
                     printf("You're $%d short!\n\n", nOwe - nCurrentAmt);
                     promptResellProperty(&nCurrent, &nOpponent, nOwe, &nCurrentAmt);
-                    if (nOwe < nCurrentAmt)
+                    if (nOwe <= nCurrentAmt) // if player has enough money to pay
                         printf("Player %d has now paid $%d to the opponent.\n\n", nPlayerNo, nOwe);
                     payAmount(&nCurrentAmt, &nOpponentAmt, nOwe);
                     sleepDelay();
